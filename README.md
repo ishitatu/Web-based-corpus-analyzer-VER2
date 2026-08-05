@@ -57,7 +57,6 @@ Additional sections (9 and above) provide frequency-table import/export, visuali
 |---|---|---|
 | **Plain text** | untagged `.txt` | word / n-gram / p-frame / cluster (surface) |
 | **Tagged** | `word_POSd_POSs_lemma` (via the companion [Google Colab notebook](https://colab.research.google.com/drive/1W62nqzdKbIIPpUYXsvE2ReLU3vccMzwx?usp=sharing)) | + lemma, POS, POS-gram, Word+POS features; Advanced KWIC |
-| **TSV** | token/lemma/pos/xpos columns (via the companion TSV Colab notebook) | same as Tagged, from an externally parsed pipeline |
 
 Auto-detect samples the first file and selects the mode automatically.
 
@@ -65,7 +64,6 @@ Auto-detect samples the first file and selects the mode automatically.
 
 - **Folder upload**: sub-folders of the selected parent folder become independent corpora (e.g. `Move1`, `Move2`)
 - **Multiple files**: grouped into a single virtual folder "Ungrouped"
-- **TSV / ZIP**: multiple TSVs merged into one corpus, with optional sub-corpus split
 - Hidden files (`.DS_Store`, `__MACOSX`, …) are excluded automatically; punctuation and SPACE tokens are ignored in all counts
 
 ### Preprocessing settings
@@ -165,7 +163,7 @@ Reproduces a Chujo & Utiyama (2006)-style comparison across measures:
 
 ## 💾 Export
 
-- 📋 Copy Table (TSV) throughout; Export to **Excel** / **CSV** (APA 7th or MLA 9th formatting)
+- 📋 Copy Table throughout; Export to **Excel** / **CSV** (APA 7th or MLA 9th formatting)
 - Concordance lines and node lists; keyness tables with all selected statistics; collocate tables; frequency lists
 - Dispersion plots and charts as JPEG
 

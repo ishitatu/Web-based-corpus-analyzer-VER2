@@ -80,7 +80,7 @@ For lemma / POS-based features (lemma, POS-gram, Word+POS, Advanced KWIC), first
 | 7 | **High-Frequency Features** | Frequency lists for any feature type; ties handling; general-corpus comparison; transpose / overlap matrix / feature profile |
 | 8 | **Keyness Analysis** | 8a) standard Target-vs-Reference keyness with 20+ measures; 8b) Multi-Corpus Keyness; 8c) Multi-Measure Analysis |
 
-This public release contains Sections 1–8. An extended research build (Sections 9 and above: frequency-table import/export, visualisation, TSV/Stanza-Biber input, multi-dimensional analysis, and other experimental analyses) exists separately; please contact the author if you are interested.
+This public release contains Sections 1–8. An extended research build (Sections 9 and above: frequency-table import/export, visualisation, TSV/Stanza-Biber input, multi-dimensional analysis, and other experimental analyses) exists separately; please contact the author if you are interested.)
 
 ---
 

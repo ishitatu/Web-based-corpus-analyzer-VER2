@@ -16,7 +16,7 @@ WBCA Version 2 is a free, open-source, browser-based corpus linguistics tool. It
 | | Link |
 |---|---|
 | **Version 2 — Google Site (documentation + embedded tool)** | <https://sites.google.com/view/web-basedcorpusanalyzerver2/> |
-| **Version 2 — run directly (GitHub Pages)** | <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/WBCA_1-8_ver2_20260908.html> |
+| **Version 2 — run directly (GitHub Pages)** | <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/WBCA_1-8_ver2_20260908.html](https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA_1-8_ver2_20260924.html)> |
 | **Version 2 — this repository** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2> |
 | **Version 1** | <https://github.com/ishitatu/Web-based-corpus-analyzer-> |
 | **Companion Google Colab notebook (POS tagging / lemmatisation)** | <https://colab.research.google.com/drive/1W62nqzdKbIIPpUYXsvE2ReLU3vccMzwx?usp=sharing> |

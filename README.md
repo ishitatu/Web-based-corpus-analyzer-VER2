@@ -1,6 +1,4 @@
 [README.md](https://github.com/user-attachments/files/32580009/README.md)
-[README.md](https://github.com/user-attachments/files/31944457/README.md)
-# Web-Based Corpus Analyzer (WBCA) — Version 2
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Made with HTML/CSS/JS](https://img.shields.io/badge/Made%20with-HTML%2FCSS%2FJS-orange)](https://developer.mozilla.org/en-US/docs/Web)

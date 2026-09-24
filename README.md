@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/32592502/README.md)
+[README.md](https://github.com/user-attachments/files/32592778/README.md)
 # Web-Based Corpus Analyzer (WBCA) — Version 2
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -16,12 +16,13 @@ WBCA Version 2 is a free, open-source, browser-based corpus linguistics tool. It
 | | Link |
 |---|---|
 | **Version 2 — Google Site (documentation + embedded tool)** | <https://sites.google.com/view/web-basedcorpusanalyzerver2/> |
-| **Version 2 — run directly (GitHub Pages)** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA_1-8_ver2_20260924.html> |
+| **Version 2 — run directly in your browser (GitHub Pages)** | <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/WBCA_1-8_ver2_20260924.html> |
+| **Version 2 — HTML file (view / download)** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA_1-8_ver2_20260924.html> |
 | **Version 2 — this repository** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2> |
 | **Version 1** | <https://github.com/ishitatu/Web-based-corpus-analyzer-> |
 | **Companion Google Colab notebook (POS tagging / lemmatisation)** | <https://colab.research.google.com/drive/1W62nqzdKbIIPpUYXsvE2ReLU3vccMzwx?usp=sharing> |
 
-**Offline use**: download `WBCA_1-8_ver2_YYYYMMDD.html` from this repository and open it in any modern browser (double-click). Everything, including the built-in reference corpora, is embedded in the file, so it works without an internet connection.
+**Offline use**: open the HTML file page above, click **Download raw file** (the ⬇ icon at the top right of the file view), and open the downloaded `WBCA_1-8_ver2_YYYYMMDD.html` in any modern browser (double-click). The GitHub file page itself only shows the file (it is too large to preview), so use the GitHub Pages link to run the tool online. Everything, including the built-in reference corpora, is embedded in the file, so it works without an internet connection.
 
 > The file name carries the build date (e.g. `20260908`). Always use the most recent file in the repository; older builds are kept only for reproducibility.
 

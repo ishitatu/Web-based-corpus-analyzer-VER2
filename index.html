@@ -4,13 +4,55 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Web-Based Corpus Analyzer (WBCA) Version 2</title>
-  <meta http-equiv="refresh" content="0; url=WBCA_1-8_ver2_20260924.html">
-  <link rel="canonical" href="WBCA_1-8_ver2_20260924.html">
-  <script>
-    window.location.replace("WBCA_1-8_ver2_20260924.html");
-  </script>
+  <style>
+    body { margin: 0; padding: 2rem 1rem; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+           line-height: 1.6; color: #1f2937; background: #ffffff; }
+    main { max-width: 40rem; margin: 0 auto; }
+    h1 { font-size: 1.25rem; margin: 0 0 .75rem; }
+    a { color: #1d4ed8; }
+    .note { color: #6b7280; font-size: .9rem; }
+  </style>
 </head>
 <body>
-  <p>Opening <a href="WBCA_1-8_ver2_20260924.html">Web-Based Corpus Analyzer (WBCA) Version 2</a>…</p>
+<main>
+  <h1>Web-Based Corpus Analyzer (WBCA) Version 2</h1>
+  <p id="msg">Opening WBCA… If it does not open, <a id="open" href="WBCA_1-8_ver2-20261124.html">click here</a>.</p>
+  <noscript><p>WBCA runs in your browser and needs JavaScript. Turn JavaScript on, then <a href="WBCA_1-8_ver2-20261124.html">open WBCA</a>.</p></noscript>
+  <p class="note">Documentation, the demo corpus and earlier builds:
+    <a href="https://github.com/ishitatu/Web-based-corpus-analyzer-VER2">github.com/ishitatu/Web-based-corpus-analyzer-VER2</a></p>
+</main>
+<script>
+  /* The build that this page opens. After uploading a newer build, change the file name on the next line.
+     If the file named here is no longer on the site, the page finds the newest WBCA_1-8_…YYYYMMDD.html
+     in the repository by itself (GitHub API) and opens that one. */
+  var WBCA_FILE = "WBCA_1-8_ver2-20261124.html";
+  var WBCA_REPO = "ishitatu/Web-based-corpus-analyzer-VER2";
+
+  (function () {
+    var link = document.getElementById("open");
+    function go(file) { link.href = file; location.replace(file); }
+    function notFound() {
+      document.getElementById("msg").innerHTML = 'The WBCA file could not be found. Please open it from the ' +
+        '<a href="https://github.com/' + WBCA_REPO + '">repository</a>.';
+    }
+    function findNewest() {
+      return fetch("https://api.github.com/repos/" + WBCA_REPO + "/contents/", { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (items) {
+          var best = null;
+          (Array.isArray(items) ? items : []).forEach(function (it) {
+            var m = /^WBCA_1-8.*?(\d{8})\.html?$/i.exec((it && it.name) || "");
+            if (m && (!best || m[1] > best.date)) best = { date: m[1], name: it.name };
+          });
+          if (best) go(encodeURIComponent(best.name)); else notFound();
+        })
+        .catch(notFound);
+    }
+    if (location.protocol === "file:" || !window.fetch) { go(WBCA_FILE); return; }
+    fetch(WBCA_FILE, { method: "HEAD", cache: "no-store" })
+      .then(function (r) { if (r.status === 404) findNewest(); else go(WBCA_FILE); })
+      .catch(function () { go(WBCA_FILE); });
+  })();
+</script>
 </body>
 </html>

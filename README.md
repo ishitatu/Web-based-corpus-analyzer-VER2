@@ -15,18 +15,18 @@ WBCA Version 2 is a free, open-source, browser-based corpus linguistics tool. It
 | | Link |
 |---|---|
 | **▶ Run WBCA in your browser** (always opens the latest build) | <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/> |
-| **Latest build — HTML file (view / download)** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA_1-8_ver2-20261124.html> |
+| **Latest build — HTML file (view / download)** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA_1-8_ver2_20261117.html> |
 | **Demo corpus** (two tagged corpora, ZIP) | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/blob/main/WBCA%20Demo%20corpus%202.zip> |
 | **Google Site (documentation + embedded tool)** | <https://sites.google.com/view/web-basedcorpusanalyzerver2/> |
 | **This repository** | <https://github.com/ishitatu/Web-based-corpus-analyzer-VER2> |
 | **Version 1** | <https://github.com/ishitatu/Web-based-corpus-analyzer-> |
 | **Companion Google Colab notebook (POS tagging / lemmatisation)** | <https://colab.research.google.com/drive/1W62nqzdKbIIPpUYXsvE2ReLU3vccMzwx?usp=sharing> |
 
-**Latest build:** `WBCA_1-8_ver2-20261124.html`. To open exactly this build (for example, in a citation), use <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/WBCA_1-8_ver2-20261124.html>.
+**Latest build:** `WBCA_1-8_ver2_20261117.html`. To open exactly this build (for example, in a citation), use <https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/WBCA_1-8_ver2_20261117.html>.
 
-**Offline use**: open the HTML file page above, click **Download raw file** (the ⬇ icon at the top right of the file view), and open the downloaded `WBCA_1-8_ver2-YYYYMMDD.html` in any modern browser (double-click). The GitHub file page itself only shows the file (it is too large to preview), so use the GitHub Pages link to run the tool online. Everything, including the built-in reference corpora, is embedded in the file, so it works without an internet connection (the one exception is the optional kuromoji analyser for Japanese; see [Privacy & Security](#-privacy--security)).
+**Offline use**: open the HTML file page above, click **Download raw file** (the ⬇ icon at the top right of the file view), and open the downloaded `WBCA_1-8_ver2_YYYYMMDD.html` in any modern browser (double-click). The GitHub file page itself only shows the file (it is too large to preview), so use the GitHub Pages link to run the tool online. Everything, including the built-in reference corpora, is embedded in the file, so it works without an internet connection (the one exception is the optional kuromoji analyser for Japanese; see [Privacy & Security](#-privacy--security)).
 
-> The file name carries the build date (e.g. `20261124`). The repository holds the latest build; earlier builds remain in the [commit history](https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/commits/main) for reproducibility (open a commit and choose **Browse files**).
+> The file name carries the build date (e.g. `20261117`). The repository holds the latest build; earlier builds remain in the [commit history](https://github.com/ishitatu/Web-based-corpus-analyzer-VER2/commits/main) for reproducibility (open a commit and choose **Browse files**).
 
 ---
 
@@ -285,7 +285,7 @@ Ishii, T. (2026). Web-Based Corpus Analyzer (WBCA), Version 2 [Computer software
 https://ishitatu.github.io/Web-based-corpus-analyzer-VER2/
 ```
 
-When reporting results, please also state the build date shown in the file name (e.g. `WBCA_1-8_ver2-20261124`) and, for collocation analyses, the CPN string displayed by the tool. The `setting` sheet of each Excel export records the file name and the settings used.
+When reporting results, please also state the build date shown in the file name (e.g. `WBCA_1-8_ver2_20261117`) and, for collocation analyses, the CPN string displayed by the tool. The `setting` sheet of each Excel export records the file name and the settings used.
 
 ---
 

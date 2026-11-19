@@ -12,11 +12,11 @@
 (function () {
 "use strict";
 const SECS = {
-  hf: ["hfFilterInput", "hfFilterMode", "hfFilterScope", "hfFilterExclude", "hfPosMainOnly", "hfPosMainPct", "hfPosSFilterCombine", "hfPosSFilterInput", "hfPosSFilterMode", "hfPosDFilterCombine", "hfPosDFilterInput", "hfPosDFilterMode"],
-  key: ["keyFeatureFilter", "keyFilterMode", "keyFilterExclude", "keyPosMainOnly", "keyPosMainPct", "keyPosSFilterCombine", "keyPosSFilterInput", "keyPosSFilterMode", "keyPosDFilterCombine", "keyPosDFilterInput", "keyPosDFilterMode"],
-  key8b: ["key8bPosMainOnly", "key8bPosMainPct", "key8bPosSFilterCombine", "key8bPosSFilterInput", "key8bPosSFilterMode", "key8bPosDFilterCombine", "key8bPosDFilterInput", "key8bPosDFilterMode", "key8bPosFilterExclude", "key8bPosFilterDisplay"],
-  key8c: ["key8cPosMainOnly", "key8cPosMainPct", "key8cPosSFilterCombine", "key8cPosSFilterInput", "key8cPosSFilterMode", "key8cPosDFilterCombine", "key8cPosDFilterInput", "key8cPosDFilterMode", "key8cPosFilterExclude", "key8cPosFilterDisplay"],
-  freq: ["freqTableFeatureFilter", "freqTableFilterMode", "freqTableFilterExclude", "freqPosMainOnly", "freqPosMainPct", "freqPosSFilterCombine", "freqPosSFilterInput", "freqPosSFilterMode", "freqPosDFilterCombine", "freqPosDFilterInput", "freqPosDFilterMode"]
+  hf: ["hfFilterInput", "hfFilterMode", "hfFilterScope", "hfFilterExclude", "hfPosCount", "hfPosMainOnly", "hfPosMainPct", "hfPosSFilterCombine", "hfPosSFilterInput", "hfPosSFilterMode", "hfPosDFilterCombine", "hfPosDFilterInput", "hfPosDFilterMode"],
+  key: ["keyFeatureFilter", "keyFilterMode", "keyFilterExclude", "keyPosCount", "keyPosMainOnly", "keyPosMainPct", "keyPosSFilterCombine", "keyPosSFilterInput", "keyPosSFilterMode", "keyPosDFilterCombine", "keyPosDFilterInput", "keyPosDFilterMode"],
+  key8b: ["key8bPosCount", "key8bPosMainOnly", "key8bPosMainPct", "key8bPosSFilterCombine", "key8bPosSFilterInput", "key8bPosSFilterMode", "key8bPosDFilterCombine", "key8bPosDFilterInput", "key8bPosDFilterMode", "key8bPosFilterExclude", "key8bPosFilterDisplay"],
+  key8c: ["key8cPosCount", "key8cPosMainOnly", "key8cPosMainPct", "key8cPosSFilterCombine", "key8cPosSFilterInput", "key8cPosSFilterMode", "key8cPosDFilterCombine", "key8cPosDFilterInput", "key8cPosDFilterMode", "key8cPosFilterExclude", "key8cPosFilterDisplay"],
+  freq: ["freqTableFeatureFilter", "freqTableFilterMode", "freqTableFilterExclude", "freqPosCount", "freqPosMainOnly", "freqPosMainPct", "freqPosSFilterCombine", "freqPosSFilterInput", "freqPosSFilterMode", "freqPosDFilterCombine", "freqPosDFilterInput", "freqPosDFilterMode"]
 };
 const OF = Object.create(null); Object.keys(SECS).forEach(k => SECS[k].forEach(id => { OF[id] = k; }));
 const AP = Object.create(null);   /* id -> { value, checked }: as applied */
@@ -41,7 +41,7 @@ window._wbcaFAput = function (id) {
 window._wbcaHfReapply = function () {
   try {
     if (typeof applyHfFilter !== "function") return;
-    const v = id => window._wbcaFAv(id).trim(), pat = v("hfFilterInput"), pos = v("hfPosSFilterInput") || v("hfPosDFilterInput");
+    const v = id => window._wbcaFAv(id).trim(), pat = v("hfFilterInput"), pos = !(window._wbcaPosCountOn && window._wbcaPosCountOn("hf")) && (v("hfPosSFilterInput") || v("hfPosDFilterInput"));
     if (!pat && !pos) { hfFilteredRows = null; return; }
     const A = typeof allHfRows !== "undefined" ? allHfRows : null, p = A && ((A.targetList || [])[0] || (A.refList || [])[0]);
     if (!pat && !(p && p.posS != null)) {   /* only the POS filter, and the table has no parts of speech: the table stays; the note of Apply filter */
@@ -903,6 +903,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   window.addEventListener("wheel", h, { capture: true, passive: true });
 })();
 </script>
+<script id="wbca-pf-guard">/* round 35 (PF): Copy Table and the exports of 7), 8a), 8b), 8c) wait while the fillers of the p-frames are counted (window._wbcaPfGuard, wbca-pf-fillers) */
+(function () { window.addEventListener("click", function (e) { var f = window._wbcaPfGuard; if (typeof f === "function") f(e); }, true); })();
+</script>
 
 <style id="wbca-semantic-frozen-columns">
 [data-wbca-frozen-col="1"] {
@@ -956,6 +959,13 @@ thead [data-wbca-frozen-col="1"] {
 #vizBiberSettings [hidden]{display:none!important}
 </style>
 <style id="wbca-embed-no-scroll-chain">html,body{overscroll-behavior:auto;}</style>
+<style id="wbca-th-lines">
+/* a thin line at the right edge of each header cell whose width can be changed (where its resize bar appears); the bar on hover as before */
+th [class*="esizer"]::after, th .col-rz::after { content:""; position:absolute; top:0; bottom:0; right:0; width:1px; background:#b8c0cc; pointer-events:none; }
+th [class*="esizer"]:hover::after, th .col-rz:hover::after { background:transparent; }
+/* the cells that have lines of their own: 7) between Target and Reference, 9a), and the cells drawn with borders */
+.hf-divider [class*="esizer"]::after, #freqTable th [class*="esizer"]::after, th[style*="border:"] [class*="esizer"]::after, th[style*="border-right"] [class*="esizer"]::after, th[style*="border:"] .col-rz::after { display:none; }
+</style>
 </head>
 <body>
 
@@ -1032,8 +1042,26 @@ window.WBCA_DEBUG = false, function () {
             For p-frames (e.g., 4 words), patterns like <code>1 * 3 4</code>, <code>1 2 * 4</code>, <code>1 2 3 *</code> are generated with <code>*</code> at any allowed slot. The distribution of words filling <code>*</code> is shown separately for Target / Reference. Tokens with only punctuation or SPACE are excluded from fillers (<code>-</code> displayed). Use the <strong>Stars (*)</strong> input in 7)/8) to generate p-frames with multiple <code>*</code> positions: e.g. with n=4, Stars=2 (exactly), the patterns <code>1 * * 4</code>, <code>1 * 3 *</code>, <code>1 2 * *</code> are generated. The <em>exactly</em> mode produces patterns with exactly k stars; <em>up to</em> mode combines 1..k stars. Fillers are restored to full n-grams in the display (e.g. <code>in the morning(3)</code>).<br>
             <strong>Allow * at first position</strong>: when checked, p-frames may begin with <code>*</code> (e.g. <code>* the morning</code>). Default: OFF.<br>
             <strong>Allow * at end position</strong>: when checked, p-frames may end with <code>*</code> (e.g. <code>in the *</code>). Default: ON.<br>
-            <span style="font-size:0.78rem; color:#6b7280;">→ See the <strong>Pattern preview</strong> on the right for live examples.</span>
+            <span style="font-size:0.78rem; color:#6b7280;">→ See the <strong>Pattern preview</strong> below for live examples.</span>
           </div>
+        </div>
+        <div id="pframePreviewBox" style="margin-top:1rem; background:#fff; border:1px solid #d1d5db; border-radius:4px; padding:0.5rem 0.7rem; font-size:0.78rem;">
+          <div style="font-weight:600; margin-bottom:0.35rem; color:#374151;">
+            <span id="pframePreviewTitle">Pattern preview (n=4, Stars=1, exactly)</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="border-collapse:collapse; font-size:0.78rem; width:100%; table-layout:auto;">
+              <thead>
+                <tr style="background:#f3f4f6;">
+                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:center; white-space:nowrap;">First</th>
+                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:center; white-space:nowrap;">Last</th>
+                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:left;">Generated patterns</th>
+                </tr>
+              </thead>
+              <tbody id="pframePreviewBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:0.3rem; color:#6b7280; font-size:0.72rem;">All four First / Last combinations are listed for reference. The actual setting is controlled by the <em>P-frame settings</em> checkboxes above.</div>
         </div>
         <div class="mt-1">
           <strong>Text preprocessing options (for all modes)</strong><br>
@@ -1089,24 +1117,6 @@ window.WBCA_DEBUG = false, function () {
         
 
         
-        <div id="pframePreviewBox" style="margin-top:1rem; background:#fff; border:1px solid #d1d5db; border-radius:4px; padding:0.5rem 0.7rem; font-size:0.78rem;">
-          <div style="font-weight:600; margin-bottom:0.35rem; color:#374151;">
-            <span id="pframePreviewTitle">Pattern preview (n=4, Stars=1, exactly)</span>
-          </div>
-          <div style="overflow-x:auto;">
-            <table style="border-collapse:collapse; font-size:0.78rem; width:100%; table-layout:auto;">
-              <thead>
-                <tr style="background:#f3f4f6;">
-                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:center; white-space:nowrap;">First</th>
-                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:center; white-space:nowrap;">Last</th>
-                  <th style="padding:3px 6px; border:1px solid #e5e7eb; text-align:left;">Generated patterns</th>
-                </tr>
-              </thead>
-              <tbody id="pframePreviewBody"></tbody>
-            </table>
-          </div>
-          <div style="margin-top:0.3rem; color:#6b7280; font-size:0.72rem;">All four First / Last combinations are listed for reference. The actual setting is controlled by the <em>P-frame settings</em> checkboxes on the left.</div>
-        </div>
 
         
       </div>
@@ -2312,7 +2322,7 @@ window.WBCA_DEBUG = false, function () {
     </div>
     <div class="flex mt-05 items-center" id="hfPosFilterRow" style="gap:0.35rem; flex-wrap:wrap;">
       <span class="text-xs" style="font-weight:600; color:#1d4ed8;">POS filter:</span>
-      <label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="hfPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="hfPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
+      <label class="text-xs" style="color:#1d4ed8;" title="Tagged occurrences only (default): with tags in pos simple / pos detail, only the occurrences with these tags are counted (with Exclude: only those without them). The frequencies, the counts of the files (range, dispersion and the statistics made from them) and the parts of speech shown come from these occurrences; the sizes (the number of words of the corpora, folders and files) stay those of all the words. A tag under main ≥ % of a feature&#39;s occurrences is taken as a tagging error and is not counted as that tag; with AND, a feature is counted only when it has all the tags. Apply filter (or Enter, Clear filter) computes the table again. All occurrences (filter only): every occurrence of a feature is counted, and the tags only choose the features shown.">Count: <select id="hfPosCount" data-wbca-label="POS filter: Count" class="border px-1 py-025 text-xs"><option value="tagged" selected>Tagged occurrences only</option><option value="all">All occurrences (filter only)</option></select></label><label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="hfPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="hfPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
       <select id="hfPosSFilterCombine" data-wbca-label="POS filter: pos simple OR / AND" class="border px-1 py-025 text-xs" title="Multiple tags: OR = any matches, AND = all must match"><option value="or" selected>OR</option><option value="and">AND</option></select>
       <label class="text-xs">pos simple
         <input type="text" id="hfPosSFilterInput" data-wbca-label="POS filter: pos simple" class="border px-1 py-025 text-xs" style="min-width:110px;" placeholder="e.g. NOUN, VERB (n-gram: DET+NOUN)">
@@ -2597,7 +2607,7 @@ window.WBCA_DEBUG = false, function () {
     </div>
     <div class="flex mt-05 items-center" id="keyPosFilterRow" style="gap:0.35rem; flex-wrap:wrap;">
       <span class="text-xs" style="font-weight:600; color:#1d4ed8;">POS filter:</span>
-      <label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="keyPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="keyPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
+      <label class="text-xs" style="color:#1d4ed8;" title="Tagged occurrences only (default): with tags in pos simple / pos detail, only the occurrences with these tags are counted (with Exclude: only those without them). The frequencies, the counts of the files (range, dispersion and the statistics made from them) and the parts of speech shown come from these occurrences; the sizes (the number of words of the corpora, folders and files) stay those of all the words. A tag under main ≥ % of a feature&#39;s occurrences is taken as a tagging error and is not counted as that tag; with AND, a feature is counted only when it has all the tags. Apply filter (or Enter, Clear filter) computes the table again. All occurrences (filter only): every occurrence of a feature is counted, and the tags only choose the features shown.">Count: <select id="keyPosCount" data-wbca-label="POS filter: Count" class="border px-1 py-025 text-xs"><option value="tagged" selected>Tagged occurrences only</option><option value="all">All occurrences (filter only)</option></select></label><label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="keyPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="keyPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
       <select id="keyPosSFilterCombine" data-wbca-label="POS filter: pos simple OR / AND" class="border px-1 py-025 text-xs" title="Multiple tags: OR = any matches, AND = all must match"><option value="or" selected>OR</option><option value="and">AND</option></select>
       <label class="text-xs">pos simple
         <input type="text" id="keyPosSFilterInput" data-wbca-label="POS filter: pos simple" class="border px-1 py-025 text-xs" style="min-width:110px;" placeholder="e.g. NOUN, VERB (n-gram: DET+NOUN)">
@@ -2979,7 +2989,7 @@ window.WBCA_DEBUG = false, function () {
     </div>
     <div class="flex mt-05 items-center" id="key8bPosFilterRow" style="gap:0.35rem; flex-wrap:wrap; display:none;">
       <span class="text-xs" style="font-weight:600; color:#1d4ed8;">POS filter:</span>
-      <label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="key8bPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="key8bPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
+      <label class="text-xs" style="color:#1d4ed8;" title="Tagged occurrences only (default): with tags in pos simple / pos detail, only the occurrences with these tags are counted (with Exclude: only those without them). The frequencies, the counts of the files (range, dispersion and the statistics made from them) and the parts of speech shown come from these occurrences; the sizes (the number of words of the corpora, folders and files) stay those of all the words. A tag under main ≥ % of a feature&#39;s occurrences is taken as a tagging error and is not counted as that tag; with AND, a feature is counted only when it has all the tags. Apply filter (or Enter, Clear filter) computes the table again. All occurrences (filter only): every occurrence of a feature is counted, and the tags only choose the features shown.">Count: <select id="key8bPosCount" data-wbca-label="POS filter: Count" class="border px-1 py-025 text-xs"><option value="tagged" selected>Tagged occurrences only</option><option value="all">All occurrences (filter only)</option></select></label><label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="key8bPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="key8bPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
       <select id="key8bPosSFilterCombine" data-wbca-label="POS filter: pos simple OR / AND" class="border px-1 py-025 text-xs" title="Multiple tags: OR = any matches, AND = all must match"><option value="or" selected>OR</option><option value="and">AND</option></select>
       <label class="text-xs" title="The pos simple tags to keep (e.g. NOUN, VERB), separated by commas or spaces; for an n-gram, one tag for each word joined by + (DET+NOUN). Applied to the cells of 8b) when you press Enter or leave the box. ☑ Tags lists the tags of the corpus.">pos simple
         <input type="text" id="key8bPosSFilterInput" data-wbca-label="POS filter: pos simple" class="border px-1 py-025 text-xs" style="min-width:110px;" placeholder="e.g. NOUN, VERB (n-gram: DET+NOUN)">
@@ -3202,7 +3212,7 @@ window.WBCA_DEBUG = false, function () {
     <div id="key8cPosFilterHost">
     <div class="flex mt-05 items-center" id="key8cPosFilterRow" style="gap:0.35rem; flex-wrap:wrap; display:none;">
       <span class="text-xs" style="font-weight:600; color:#1d4ed8;">POS filter:</span>
-      <label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="key8cPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="key8cPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
+      <label class="text-xs" style="color:#1d4ed8;" title="Tagged occurrences only (default): with tags in pos simple / pos detail, only the occurrences with these tags are counted (with Exclude: only those without them). The frequencies, the counts of the files (range, dispersion and the statistics made from them) and the parts of speech shown come from these occurrences; the sizes (the number of words of the corpora, folders and files) stay those of all the words. A tag under main ≥ % of a feature&#39;s occurrences is taken as a tagging error and is not counted as that tag; with AND, a feature is counted only when it has all the tags. Apply filter (or Enter, Clear filter) computes the table again. All occurrences (filter only): every occurrence of a feature is counted, and the tags only choose the features shown.">Count: <select id="key8cPosCount" data-wbca-label="POS filter: Count" class="border px-1 py-025 text-xs"><option value="tagged" selected>Tagged occurrences only</option><option value="all">All occurrences (filter only)</option></select></label><label class="text-xs" style="color:#1d4ed8;" title="When ON (default), a word&#39;s minor POS tags — those below the threshold % of its total occurrences (likely tagging errors) — are ignored by this filter. Genuinely multi-POS words (e.g. &#39;cause&#39; as NOUN and VERB) keep every major tag, so they match either tag. The most frequent tag is always kept."><input type="checkbox" id="key8cPosMainOnly" data-wbca-label="POS filter: main" checked> main</label><label class="text-xs" title="Threshold: POS tags under this % of the word&#39;s occurrences are treated as tagging noise and ignored while &#39;main&#39; is ON. The most frequent tag is always kept.">≥ <input type="number" id="key8cPosMainPct" data-wbca-label="POS filter: main ≥ %" value="10" min="1" max="50" step="1" class="border px-1 py-025 text-xs" style="width:3.4rem;">%</label>
       <select id="key8cPosSFilterCombine" data-wbca-label="POS filter: pos simple OR / AND" class="border px-1 py-025 text-xs" title="Multiple tags: OR = any matches, AND = all must match"><option value="or" selected>OR</option><option value="and">AND</option></select>
       <label class="text-xs" title="The pos simple tags to keep (e.g. NOUN, VERB), separated by commas or spaces; for an n-gram, one tag for each word joined by + (DET+NOUN). Applied to the features of 8c) when you press Enter or leave the box. ☑ Tags lists the tags of the corpus.">pos simple
         <input type="text" id="key8cPosSFilterInput" data-wbca-label="POS filter: pos simple" class="border px-1 py-025 text-xs" style="min-width:110px;" placeholder="e.g. NOUN, VERB (n-gram: DET+NOUN)">
@@ -8974,11 +8984,11 @@ function _readPframeStarsOpt(idCount, idMode, fallbackCount) {
     allowLastStar: !allowLastEl || !!allowLastEl.checked
   };
 }
-function recordFeaturePosForFile(file, featureType, n, dest, caseInsensitive) {
+function recordFeaturePosForFile(file,featureType,n,dest,caseInsensitive,_pc){
   if (file = _wbcaEnsureSents(file), !dest) return;
   const numMode = getNumberHandlingMode(),
     field = "word_lemma" === featureType || "ngram_lemma" === featureType ? "lemma" : "word",
-    addOne = (feat, sPos, dPos) => {
+    addOne=(feat,sPos,dPos)=>{if(_pc&&!_wbcaPosCountUnit(_pc,feat,sPos,dPos))return;
       let e = dest.get(feat);
       e || (e = {
         s: new Map(),
@@ -9277,7 +9287,7 @@ function secTogglePosBlock(prefix, ftSelectId) {
 function processWordForFile(file, field, destT, destR, caseInsensitive, posFilter) {
   const numMode = getNumberHandlingMode();
   const units = wbcaLexicalUnits(file.tokens, field, caseInsensitive, numMode);
-  const vals = units.filter(u => !posFilter?.enabled || tokenPassesPosFilter(file.tokens[u.start], posFilter)).map(u => u.value);
+  const _pc=posFilter&&posFilter.wbcaCount?posFilter:null;const vals=_pc?units.filter(u=>u.value!=null&&_wbcaPosCountUnit(_pc,u.value,wbcaUnitPosTag(file.tokens,u,"poss"),wbcaUnitPosTag(file.tokens,u,"posd"))).map(u=>u.value):units.filter(u=>!posFilter?.enabled||tokenPassesPosFilter(file.tokens[u.start],posFilter)).map(u=>u.value);
   // Preserve first-occurrence order, including numeric-looking words, so
   // file-detail limits and downstream tie ordering remain unchanged.
   const counts = new Map();
@@ -9286,6 +9296,8 @@ function processWordForFile(file, field, destT, destR, caseInsensitive, posFilte
     counts.set(val, (counts.get(val) || 0) + 1);
     total++;
   }
+  /* Count (POS filter): the size stays the number of all the words */
+  if (_pc) { total = 0; for (const u of units) if (u.value != null) total++; }
   if (destT) {
     _wbcaGenRecord(destT.counts, counts);
     for (const [key, count] of counts) destT.counts[key] = (destT.counts[key] || 0) + count;
@@ -9390,7 +9402,8 @@ function _wbcaCountSents(file) {
 function* _wbcaNgramSteps(file, field, n, destT, destR, caseInsensitive, posFilter) {
   if (file = _wbcaEnsureSents(file), n <= 1) return;
   const numMode = getNumberHandlingMode(),
-    posOn = !(!posFilter || !posFilter.enabled),
+    _pc = posFilter && posFilter.wbcaCount ? posFilter : null,
+    posOn = !_pc && !(!posFilter || !posFilter.enabled),
     fileCounts = Object.create(null);
   let totalUnits = 0,
     lastYield = performance.now(),
@@ -9407,7 +9420,8 @@ function* _wbcaNgramSteps(file, field, n, destT, destR, caseInsensitive, posFilt
         passArr = null;
       const common = wbcaLexicalUnits(tokens, field, caseInsensitive, numMode);
       arr = common.map(u => u.value);
-      if (posOn) passArr = common.map(u => tokenPassesPosFilter(tokens[u.start], posFilter));
+      if(posOn)passArr=common.map(u=>tokenPassesPosFilter(tokens[u.start],posFilter));
+      const _ps=_pc?common.map(u=>wbcaUnitPosTag(tokens,u,"poss")):null,_pd=_pc?common.map(u=>wbcaUnitPosTag(tokens,u,"posd")):null;
       const L = arr.length;
       if (L < n) continue;
       const lastStart = L - n;
@@ -9426,6 +9440,8 @@ function* _wbcaNgramSteps(file, field, n, destT, destR, caseInsensitive, posFilt
         }
         let key = arr[i];
         for (let j = 1; j < n; j++) key += " " + arr[i + j];
+        /* Count (POS filter): an n-gram whose tags do not match is not counted; the size stays the number of all the n-grams */
+        if (_pc) { let _s = _ps[i], _d = _pd[i]; for (let j = 1; j < n; j++) _s += "+" + _ps[i + j], _d += "+" + _pd[i + j]; if (!_wbcaPosCountUnit(_pc, key, _s, _d)) { (typeof _wins !== "undefined" && _wins) || totalUnits++; continue; } }
         {
           fileCounts[key] = (fileCounts[key] || 0) + 1;
           totalUnits++;
@@ -10494,10 +10510,10 @@ function applyKeynessFilter() {
     const fActive = !!filterStr,
       fTerms = filterStr.toLowerCase().split(/[,|]/).map(s => s.trim()).filter(s => s.length > 0),
       _fTM = fTerms.map(t => _wbcaFeatTermMatcher(t, mode));
-    let posSPat = (_wbcaFAel("keyPosSFilterInput")?.value || "").trim();
+    let posSPat = window._wbcaPosCountOn && window._wbcaPosCountOn("key") ? "" : (_wbcaFAel("keyPosSFilterInput")?.value || "").trim();
     const posSMode = _wbcaFAel("keyPosSFilterMode")?.value || "exact",
       posSComb = _wbcaFAel("keyPosSFilterCombine")?.value || "or";
-    let posDPat = (_wbcaFAel("keyPosDFilterInput")?.value || "").trim();
+    let posDPat = window._wbcaPosCountOn && window._wbcaPosCountOn("key") ? "" : (_wbcaFAel("keyPosDFilterInput")?.value || "").trim();
     const posDMode = _wbcaFAel("keyPosDFilterMode")?.value || "exact",
       posDComb = _wbcaFAel("keyPosDFilterCombine")?.value || "or",
       _posMainOpt = {
@@ -11445,8 +11461,8 @@ async function computeKeyness() {
     if (keynessBtn && (keynessBtn.disabled = true), cancelBtn && (cancelBtn.style.display = "inline-flex"), keyStatus.textContent = "Phase 1/3: Collecting features...", updateKeynessProgress(5, "Scanning files..."), await yieldToUI(_rg), keynessComputationCancelled) return void hideKeynessProgress();
     const useMTK = document.getElementById("keyUseMTK")?.checked ?? false,
       needFileDetails = useMTK || advancedStats || wbcaNeedsKeyDocs("key"),
-      _stars8a = _readPframeStarsOpt("keyPframeStars", "keyPframeStarsMode", 1),
-      _posF8a = posApplicableType(featureType) ? secReadPosFilter("key") : null;
+      _stars8a = (window._wbcaPfBegin || ((a, b) => b))("8a", _readPframeStarsOpt("keyPframeStars", "keyPframeStarsMode", 1), { featureType, n, caseInsensitive, T: targetFolders, R: gcRef8a ? [] : referenceFolders }),
+      _posF8a = (await window._wbcaPosCountPrep("key", featureType, n, new Set([...targetFolders, ...(gcRef8a ? [] : referenceFolders)]), caseInsensitive, { stop: () => typeof keynessComputationCancelled !== "undefined" && !!keynessComputationCancelled })) || (posApplicableType(featureType) ? secReadPosFilter("key") : null);
     _keyLastFeatureType = featureType;
     const _keyPosDist = posApplicableType(featureType) && _wbcaShowPosUsed("key", featureType) ? {
         T: new Map(),
@@ -12914,7 +12930,7 @@ function applyKwicFilter() {
       okRight = kwicMatchesFilter(r.rightText, rightStr, rightMode, r, "right", rightPos, rightRange);
     return leftStr && leftExclude && (okLeft = !okLeft), nodeStr && nodeExclude && (okNode = !okNode), rightStr && rightExclude && (okRight = !okRight), okLeft && okNode && okRight;
   });
-  if (lastKwicRows = filtered.slice(0, maxHits), window._wbcaKwicAll = [filtered, lastKwicRows], lastOriginalIndex = null, window.lastKwicFilterState = {
+  window._wbcaKwicCountKeep&&(filtered=filtered.filter(window._wbcaKwicCountKeep));if (lastKwicRows = filtered.slice(0, maxHits), window._wbcaKwicAll = [filtered, lastKwicRows], lastOriginalIndex = null, window.lastKwicFilterState = {
     leftStr,
     nodeStr,
     rightStr,
@@ -13744,8 +13760,8 @@ async function _wbcaComputeHfCore() {
   status.textContent = "Collecting features...";
   const caseInsensitive = document.getElementById("hfCaseInsensitive")?.checked ?? true,
     excludeStopwords = document.getElementById("hfExcludeStopwords")?.checked ?? false,
-    _starsHf = _readPframeStarsOpt("hfPframeStars", "hfPframeStarsMode", 1),
-    _posFHf = posApplicableType(featureType) ? secReadPosFilter("hf") : null,
+    _starsHf = (window._wbcaPfBegin || ((a, b) => b))("7", _readPframeStarsOpt("hfPframeStars", "hfPframeStarsMode", 1), { featureType, n, caseInsensitive, T: targetFolders, R: gcRefHf ? [] : referenceFolders }),
+    _posFHf = (await window._wbcaPosCountPrep("hf", featureType, n, new Set([...targetFolders, ...(gcRefHf ? [] : referenceFolders)]), caseInsensitive, { stop: () => typeof _wbcaStopAsked === "function" && _wbcaStopAsked("7") })) || (posApplicableType(featureType) ? secReadPosFilter("hf") : null),
     _hfPosDist = posApplicableType(featureType) && _wbcaShowPosUsed("hf", featureType) ? {
       T: new Map(),
       R: new Map()
@@ -14058,10 +14074,10 @@ function applyHfFilter(){if (!allHfRows || !allHfRows.targetList?.length && !all
     mode = filterMode?.value || "partial",
     scope = filterScope?.value || "all",
     isExclude = filterExclude?.checked || false;
-  let posSPat = (_wbcaFAel("hfPosSFilterInput")?.value || "").trim();
+  let posSPat=window._wbcaPosCountOn&&window._wbcaPosCountOn("hf")?"":(_wbcaFAel("hfPosSFilterInput")?.value||"").trim();
   const posSMode = _wbcaFAel("hfPosSFilterMode")?.value || "exact",
     posSComb = _wbcaFAel("hfPosSFilterCombine")?.value || "or";
-  let posDPat = (_wbcaFAel("hfPosDFilterInput")?.value || "").trim();
+  let posDPat=window._wbcaPosCountOn&&window._wbcaPosCountOn("hf")?"":(_wbcaFAel("hfPosDFilterInput")?.value||"").trim();
   const posDMode = _wbcaFAel("hfPosDFilterMode")?.value || "exact",
     posDComb = _wbcaFAel("hfPosDFilterCombine")?.value || "or",
     _posMainOpt = {
@@ -16096,18 +16112,19 @@ async function computeKeyness8b() {
       wrapEl.innerHTML = "", window._key8bCancelRequested = false, _hideKey8bProgress(), statusEl.textContent = "Cancelled.";
     };
     try {
-      const _stars8b = _readPframeStarsOpt("key8bPframeStars", "key8bPframeStarsMode", 1);
+      const _stars8b = (window._wbcaPfBegin || ((a, b) => b))("8b", _readPframeStarsOpt("key8bPframeStars", "key8bPframeStarsMode", 1), { featureType, n, caseInsensitive, T: targetFoldersList, R: gcRef8b ? [] : Array.from(key8bReferenceFolders), commit: !0 });
       if (statusEl.textContent = "Scanning all folders (single pass)…", !(await _k8bStep(true))) return void _k8bStop();
       const refFoldersList = Array.from(key8bReferenceFolders);
       let folderData = null;
       {
         const unionFolders = new Set([...targetFoldersList, ...(gcRef8b ? [] : refFoldersList)]);
+        const _pc8b = await window._wbcaPosCountPrep("key8b", featureType, n, unionFolders, caseInsensitive, { stop: () => !!window._key8bCancelRequested });
         if (folderData = await collectFolderFeatureCounts(featureType, n, unionFolders, caseInsensitive, needFileDetails8b, clusterOptions8b, _stars8b, Object.assign((d, t) => {
           const s = document.getElementById("key8bStatus");
           s && (s.textContent = `Scanning files… ${d}/${t}`);
         }, {
           wbcaStop: () => !!window._key8bCancelRequested
-        })), !folderData || !(await _k8bStep())) return void _k8bStop();
+        }), _pc8b), !folderData || !(await _k8bStep())) return void _k8bStop();
         if (minFreq > 1) {
           /* the features under Min freq in all the folders together are left out (in steps; the same features) */
           const allFolders = Array.from(unionFolders),
@@ -16207,6 +16224,7 @@ async function computeKeyness8b() {
           referenceFillers = refFillers;
         if (excludeTgtFromRef8b && !gcRef8b) {
           const cleanFolders = new Set(wbcaKeyReferenceFiles(folder, key8bReferenceFolders).map(f => f.folder));
+          window._wbcaPfClean && window._wbcaPfClean("8b", folder, cleanFolders);
           const cleanRef = await wbcaMergeFolderCountsSteps(Array.from(cleanFolders), folderData.byFolder, needFileDetails8b, _k8bStep);
           if (!cleanRef) return void _k8bStop();
           Rc = cleanRef.counts;
@@ -16563,12 +16581,12 @@ function renderKey8bTable(topN, metric, featureType, advancedStats) {
             const sv = getKey8bMetricVal(r, s) ?? ("rangeR" === s ? r.rangeR : "juillandR" === s ? r.juillandR : "dpR" === s ? r.dpR : null);
             null != sv && tipParts.push(`${KEY8B_METRIC_LABELS[s]}:${wbcaIsQKey(s) ? wbcaFmtQ(sv) : formatNumber(sv, 2)}`);
           }
-          html += `<td style="padding:3px 4px; border:1px solid #ddd; text-align:center; cursor:pointer; overflow:hidden;"\n            class="k8b-cell"\n            data-folder="${escapeHtml(folder)}"\n            data-feature="${escapeHtml(r.feature)}"\n            data-ftype="${escapeHtml(featureType)}"\n            data-statval="${null != val ? val : ""}"\n            data-freqval="${null != r.fT ? r.fT : ""}"\n            data-pmwval="${null != r.normT ? wbcaPm(r.normT) : ""}"\n            title="${escapeHtml(r.feature)} | ${tipParts.join(" | ")}">\n            <span style="display:block; overflow:visible; text-overflow:clip;">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">${escapeHtml(metricLabel)}:${valStr}${showRawFreq && null != r.fT ? ' <span style="color:#c2410c">[fT:' + r.fT + "]</span>" : ""}${showNorm && null != r.normT ? ' <span style="color:#0ea5e9">(' + formatNumber(wbcaPm(r.normT), 1) + wbcaNormInline() + ")</span>" : ""}${showRange && null != r.fileT ? ' <span style="color:#15803d">[range:' + r.fileT + "]</span>" : ""}</span>${window._wbca8bPosLine ? _wbca8bPosLine(r, folder) : ""}\n          </td>`;
+          html += `<td style="padding:3px 4px; border:1px solid #ddd; text-align:center; cursor:pointer; overflow:hidden;"\n            class="k8b-cell"\n            data-folder="${escapeHtml(folder)}"\n            data-feature="${escapeHtml(r.feature)}"\n            data-ftype="${escapeHtml(featureType)}"\n            data-statval="${null != val ? val : ""}"\n            data-freqval="${null != r.fT ? r.fT : ""}"\n            data-pmwval="${null != r.normT ? wbcaPm(r.normT) : ""}"\n            title="${escapeHtml(r.feature)} | ${tipParts.join(" | ")}">\n            <span style="display:block; overflow:visible; text-overflow:clip;">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">${escapeHtml(metricLabel)}:${valStr}${showRawFreq && null != r.fT ? ' <span style="color:#c2410c">[fT:' + r.fT + "]</span>" : ""}${showNorm && null != r.normT ? ' <span style="color:#0ea5e9">(' + formatNumber(wbcaPm(r.normT), 1) + wbcaNormInline() + ")</span>" : ""}${showRange && null != r.fileT ? ' <span style="color:#15803d">[range:' + r.fileT + "]</span>" : ""}</span>${window._wbca8bPosLine ? _wbca8bPosLine(r, folder) : ""}${window._wbcaPF ? _wbcaPF.cell8b(folder, r.feature) : ""}\n          </td>`;
         } else html += '<td style="border:1px solid #ddd;"></td>';
       }
       if (hasRef) {
         const rr = refRowsSorted[rank];
-        html += rr ? `<td data-feature="${escapeHtml(rr.feature)}" style="padding:3px 4px; border:1px solid #ddd; text-align:center; overflow:hidden; background:#eff6ff;">\n            <span style="display:block; overflow:visible; text-overflow:clip;" title="${escapeHtml(rr.feature)}">${escapeHtml(rr.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">fR:${rr.fR} (${formatNumber(wbcaPm(rr.normR), 1)}${wbcaNormInline()})${showRange ? _wbca8bRefRangeHtml(rr.feature) : ""}</span>${window._wbca8bRefPosLine ? _wbca8bRefPosLine(rr.feature) : ""}\n          </td>` : '<td style="border:1px solid #ddd; background:#eff6ff;"></td>';
+        html += rr ? `<td data-feature="${escapeHtml(rr.feature)}" style="padding:3px 4px; border:1px solid #ddd; text-align:center; overflow:hidden; background:#eff6ff;">\n            <span style="display:block; overflow:visible; text-overflow:clip;" title="${escapeHtml(rr.feature)}">${escapeHtml(rr.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">fR:${rr.fR} (${formatNumber(wbcaPm(rr.normR), 1)}${wbcaNormInline()})${showRange ? _wbca8bRefRangeHtml(rr.feature) : ""}</span>${window._wbca8bRefPosLine ? _wbca8bRefPosLine(rr.feature) : ""}${window._wbcaPF ? _wbcaPF.cell8b(_wbcaPF.REF, rr.feature) : ""}\n          </td>` : '<td style="border:1px solid #ddd; background:#eff6ff;"></td>';
       }
       html += "</tr>";
     }
@@ -16592,7 +16610,7 @@ function renderKey8bTable(topN, metric, featureType, advancedStats) {
             const sv = getKey8bMetricVal(r, s) ?? ("rangeR" === s ? r.rangeR : "juillandR" === s ? r.juillandR : "dpR" === s ? r.dpR : null);
             null != sv && tipParts.push(`${KEY8B_METRIC_LABELS[s]}:${wbcaIsQKey(s) ? wbcaFmtQ(sv) : formatNumber(sv, 2)}`);
           }
-          html += `<td style="padding:3px 4px; border:1px solid #ddd; text-align:center; cursor:pointer; overflow:hidden;"\n            class="k8b-cell"\n            data-folder="${escapeHtml(folder)}"\n            data-feature="${escapeHtml(r.feature)}"\n            data-ftype="${escapeHtml(featureType)}"\n            data-statval="${null != val ? val : ""}"\n            data-freqval="${null != r.fT ? r.fT : ""}"\n            data-pmwval="${null != r.normT ? wbcaPm(r.normT) : ""}"\n            title="${escapeHtml(r.feature)} | ${tipParts.join(" | ")}">\n            <span style="display:block; overflow:visible; text-overflow:clip;">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">${escapeHtml(metricLabel)}:${valStr}${showRawFreq && null != r.fT ? ' <span style="color:#c2410c">[fT:' + r.fT + "]</span>" : ""}${showNorm && null != r.normT ? ' <span style="color:#0ea5e9">(' + formatNumber(wbcaPm(r.normT), 1) + wbcaNormInline() + ")</span>" : ""}${showRange && null != r.fileT ? ' <span style="color:#15803d">[range:' + r.fileT + "]</span>" : ""}</span>${window._wbca8bPosLine ? _wbca8bPosLine(r, folder) : ""}\n          </td>`;
+          html += `<td style="padding:3px 4px; border:1px solid #ddd; text-align:center; cursor:pointer; overflow:hidden;"\n            class="k8b-cell"\n            data-folder="${escapeHtml(folder)}"\n            data-feature="${escapeHtml(r.feature)}"\n            data-ftype="${escapeHtml(featureType)}"\n            data-statval="${null != val ? val : ""}"\n            data-freqval="${null != r.fT ? r.fT : ""}"\n            data-pmwval="${null != r.normT ? wbcaPm(r.normT) : ""}"\n            title="${escapeHtml(r.feature)} | ${tipParts.join(" | ")}">\n            <span style="display:block; overflow:visible; text-overflow:clip;">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">${escapeHtml(metricLabel)}:${valStr}${showRawFreq && null != r.fT ? ' <span style="color:#c2410c">[fT:' + r.fT + "]</span>" : ""}${showNorm && null != r.normT ? ' <span style="color:#0ea5e9">(' + formatNumber(wbcaPm(r.normT), 1) + wbcaNormInline() + ")</span>" : ""}${showRange && null != r.fileT ? ' <span style="color:#15803d">[range:' + r.fileT + "]</span>" : ""}</span>${window._wbca8bPosLine ? _wbca8bPosLine(r, folder) : ""}${window._wbcaPF ? _wbcaPF.cell8b(folder, r.feature) : ""}\n          </td>`;
         } else html += '<td style="border:1px solid #ddd;"></td>';
       }
       html += "</tr>";
@@ -16601,7 +16619,7 @@ function renderKey8bTable(topN, metric, featureType, advancedStats) {
       html += '<tr><td style="padding:4px 8px; border:1px solid #ccc; font-weight:600; font-style:italic; color:#1d4ed8; position:sticky; left:0; background:#eff6ff; z-index:1; overflow:visible; text-overflow:clip;">Reference</td>';
       for (let i = 0; i < colCount; i++) {
         const r = refRowsSorted[i];
-        html += r ? `<td data-feature="${escapeHtml(r.feature)}" style="padding:3px 4px; border:1px solid #ddd; text-align:center; overflow:hidden; background:#eff6ff;">\n            <span style="display:block; overflow:visible; text-overflow:clip;" title="${escapeHtml(r.feature)}">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">fR:${r.fR} (${formatNumber(wbcaPm(r.normR), 1)}${wbcaNormInline()})${showRange ? _wbca8bRefRangeHtml(r.feature) : ""}</span>${window._wbca8bRefPosLine ? _wbca8bRefPosLine(r.feature) : ""}\n          </td>` : '<td style="border:1px solid #ddd; background:#eff6ff;"></td>';
+        html += r ? `<td data-feature="${escapeHtml(r.feature)}" style="padding:3px 4px; border:1px solid #ddd; text-align:center; overflow:hidden; background:#eff6ff;">\n            <span style="display:block; overflow:visible; text-overflow:clip;" title="${escapeHtml(r.feature)}">${escapeHtml(r.feature)}</span>\n            <span style="color:#6b7280; font-size:0.75em;">fR:${r.fR} (${formatNumber(wbcaPm(r.normR), 1)}${wbcaNormInline()})${showRange ? _wbca8bRefRangeHtml(r.feature) : ""}</span>${window._wbca8bRefPosLine ? _wbca8bRefPosLine(r.feature) : ""}${window._wbcaPF ? _wbcaPF.cell8b(_wbcaPF.REF, r.feature) : ""}\n          </td>` : '<td style="border:1px solid #ddd; background:#eff6ff;"></td>';
       }
       html += "</tr>";
     }
@@ -16794,6 +16812,7 @@ function _key8bStructuredRows(featuresOnly) {
     },
     _rgR = showRG && "undefined" != typeof key8bRefCache && !!key8bRefCache && !key8bRefCache.gcRef,
     out = [],
+    _PF8 = window._wbcaPF ? _wbcaPF.x8b() : null,
     _pp = !!window._wbca8bPosOn && _wbca8bPosOn(),
     _ppR = _pp && _wbca8bRefPosHas(),
     _tieSl = {},
@@ -16803,18 +16822,18 @@ function _key8bStructuredRows(featuresOnly) {
     const header = ["#"];
     for (const f of targetFoldersList) {
       header.push(f);
-      featuresOnly || (header.push(f + " " + metricLabel), showFT && header.push(f + " fT"), showPM && header.push(f + " pmw"), showRG && header.push(f + " range")), _pp && header.push(f + " pos simple", f + " pos detail");
+      featuresOnly || (header.push(f + " " + metricLabel), showFT && header.push(f + " fT"), showPM && header.push(f + " pmw"), showRG && header.push(f + " range")), _pp && header.push(f + " pos simple", f + " pos detail"), _PF8 && header.push(f + " " + _PF8.lab);
     }
-    refRowsSorted.length > 0 && (header.push("Reference"), featuresOnly || (showFT && header.push("Reference fR"), showPM && header.push("Reference pmw"), _rgR && header.push("Reference range")), _ppR && header.push("Reference pos simple", "Reference pos detail")), out.push(header);
+    refRowsSorted.length > 0 && (header.push("Reference"), featuresOnly || (showFT && header.push("Reference fR"), showPM && header.push("Reference pmw"), _rgR && header.push("Reference range")), _ppR && header.push("Reference pos simple", "Reference pos detail"), _PF8 && _PF8.ref && header.push("Reference " + _PF8.lab)), out.push(header);
     for (let rank = 0; rank < _rowCnt; rank++) {
       const line = [rank + 1];
       for (const f of targetFoldersList) {
         const r = (_tieSl[f] || [])[rank];
-        line.push(wordOf(r)), featuresOnly || (line.push(valOf(r)), showFT && line.push(ftOf(r)), showPM && line.push(pmOf(r)), showRG && line.push(rgOf(r))), _pp && line.push(..._wbca8bPosTexts(_passes(r) ? r : null));
+        line.push(wordOf(r)), featuresOnly || (line.push(valOf(r)), showFT && line.push(ftOf(r)), showPM && line.push(pmOf(r)), showRG && line.push(rgOf(r))), _pp && line.push(..._wbca8bPosTexts(_passes(r) ? r : null)), _PF8 && line.push(_passes(r) && r ? _PF8.t(f, r.feature) : "");
       }
       if (refRowsSorted.length > 0) {
         const rr = refRowsSorted[rank];
-        line.push(rr ? rr.feature : ""), featuresOnly || (showFT && line.push(rr && null != rr.fR ? rr.fR : ""), showPM && line.push(rr && null != rr.normR && isFinite(rr.normR) ? +(+wbcaPm(rr.normR)).toFixed(1) : ""), _rgR && line.push(rgROf(rr))), _ppR && line.push(..._wbca8bRefPosTexts(rr));
+        line.push(rr ? rr.feature : ""), featuresOnly || (showFT && line.push(rr && null != rr.fR ? rr.fR : ""), showPM && line.push(rr && null != rr.normR && isFinite(rr.normR) ? +(+wbcaPm(rr.normR)).toFixed(1) : ""), _rgR && line.push(rgROf(rr))), _ppR && line.push(..._wbca8bRefPosTexts(rr)), _PF8 && _PF8.ref && line.push(rr ? _PF8.t(_wbcaPF.REF, rr.feature) : "");
       }
       out.push(line);
     }
@@ -16845,7 +16864,7 @@ function _key8bStructuredRows(featuresOnly) {
           out.push(l);
         }
       }
-      _pp && out.push(..._wbca8bPosRows(f + " ", Array.from({length: _rowCnt}, (_, i) => _passes(fRows[i]) ? fRows[i] : null), _rowCnt));
+      _pp && out.push(..._wbca8bPosRows(f + " ", Array.from({length: _rowCnt}, (_, i) => _passes(fRows[i]) ? fRows[i] : null), _rowCnt)), _PF8 && out.push([f + " " + _PF8.lab, ...Array.from({length: _rowCnt}, (_, i) => _passes(fRows[i]) && fRows[i] ? _PF8.t(f, fRows[i].feature) : "")]);
     }
     if (refRowsSorted.length > 0) {
       const wl = ["Reference"];
@@ -16867,7 +16886,7 @@ function _key8bStructuredRows(featuresOnly) {
           out.push(l);
         }
       }
-      _ppR && out.push(..._wbca8bRefPosRows(refRowsSorted, _rowCnt));
+      _ppR && out.push(..._wbca8bRefPosRows(refRowsSorted, _rowCnt)), _PF8 && _PF8.ref && out.push(["Reference " + _PF8.lab, ...Array.from({length: _rowCnt}, (_, i) => refRowsSorted[i] ? _PF8.t(_wbcaPF.REF, refRowsSorted[i].feature) : "")]);
     }
   }
   return out;
@@ -17143,11 +17162,12 @@ function exportKey8bToExcel() {
           tFillers = folderFillers.targetFillers || {},
           rFillers = folderFillers.referenceFillers || {},
           hdr = ["#", "Feature", ...(window._wbca8bPosOn && _wbca8bPosOn() ? ["pos simple", "pos detail"] : []), "freq_T", "norm_T (" + wbcaNormTag() + ")", "freq_R", "norm_R (" + wbcaNormTag() + ")", "range_T", "range_R", ..._x8bDet.map(k => KEY8B_METRIC_LABELS[k] || k)];
-        isPframe && hdr.push("Fillers_T (for *)", "Fillers_R (for *)");
+        isPframe && hdr.push(...(window._wbcaPF && _wbcaPF.x8bDet() ? _wbcaPF.x8bHead() : ["Fillers_T (for *)", "Fillers_R (for *)"]));
         const sheetRows = [hdr];
         stopwordsExcl && sheetRows.unshift(["[Stopwords excluded]"]), rows.forEach((r, idx) => {
           const row = [idx + 1, r.feature, ...(window._wbca8bPosOn && _wbca8bPosOn() ? _wbca8bPosTexts(r) : []), r.fT, null != r.normT ? +formatNumber(wbcaPm(r.normT), 2) : "", r.fR, null != r.normR ? +formatNumber(wbcaPm(r.normR), 2) : "", null != r.fileT ? r.fileT : "", null != r.fileR ? r.fileR : "", ..._x8bDet.map(k => _x8bVal(k, getKey8bMetricVal(r, k)))];
-          if (isPframe) {
+          if (isPframe && window._wbcaPF && _wbcaPF.x8bDet()) row.push(..._wbcaPF.x8bSheet(folder, r.feature));
+          else if (isPframe) {
             const ft = tFillers[r.feature] || {},
               fr = rFillers[r.feature] || {};
             row.push(Object.entries(ft).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([w, c]) => `${_pframeRestoreNgram(r.feature, w)}(${c})`).join("; ") || "-", Object.entries(fr).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([w, c]) => `${_pframeRestoreNgram(r.feature, w)}(${c})`).join("; ") || "-");
@@ -17564,7 +17584,7 @@ async function computeKeyness8c() {
           position
         };
       }
-      const _stars8c = _readPframeStarsOpt("key8cPframeStars", "key8cPframeStarsMode", 1),
+      const _stars8c = (window._wbcaPfBegin || ((a, b) => b))("8c", _readPframeStarsOpt("key8cPframeStars", "key8cPframeStarsMode", 1), { featureType, n, caseInsensitive: caseIns, T: key8cTargetFolders, R: [] }),
         targetFoldersList = Array.from(key8cTargetFolders).sort(),
         needFileDetails8c = useMTK || advDisp || wbcaNeedsKeyDocs("key8c"),
         allFiles8c = Object.values(corpus.files || {}),
@@ -17574,13 +17594,14 @@ async function computeKeyness8c() {
         list || filesByFolder8c.set(file.folder, list = []), list.push(file);
       }
       const refFiles8c = allFiles8c.filter(file => key8cReferenceFolders.has(file.folder));
+      const _pc8c = await window._wbcaPosCountPrep("key8c", featureType, n, new Set([...key8cTargetFolders, ...("corpus" === mode ? key8cReferenceFolders : [])]), caseIns, { stop: () => !!window._key8cCancelRequested });
       if (!targetFoldersList.length) return void (statusEl.textContent = "No Target folders selected.");
       let refData;
       const emptySet = new Set();
       if ("corpus" === mode) {
         if (!key8cReferenceFolders.size) return void (statusEl.textContent = "No Reference folders selected.");
         statusEl.textContent = "Computing Reference…", await new Promise(r => setTimeout(r, 5)), wbcaResetCheck(_rg);
-        const rStats = await collectFeatureCounts(featureType, n, emptySet, key8cReferenceFolders, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, null, null, (d, t) => {
+        const rStats = await collectFeatureCounts(featureType, n, emptySet, key8cReferenceFolders, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, _pc8c, null, (d, t) => {
           statusEl && (statusEl.textContent = `Computing Reference… ${d}/${t} files`);
         }, refFiles8c, _k8cStepStop);
         refData = {
@@ -17612,7 +17633,7 @@ async function computeKeyness8c() {
         }
         const singleT = new Set([folder]),
           _k8cPos = window._wbca8cPosMaps ? window._wbca8cPosMaps(featureType) : null,
-          tStats = await collectFeatureCounts(featureType, n, singleT, emptySet, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, null, _k8cPos, (d, t) => {
+          tStats = await collectFeatureCounts(featureType, n, singleT, emptySet, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, _pc8c, _k8cPos, (d, t) => {
             statusEl && (statusEl.textContent = `Computing ${folder}… ${d}/${t} files`);
           }, filesByFolder8c.get(folder) || [], _k8cStepStop),
           NT = tStats.totalTargetUnits,
@@ -17629,7 +17650,7 @@ async function computeKeyness8c() {
           } = refData;
           if (exclTgtFromRef8c) {
             const allowed = wbcaKeyReferenceFiles(folder, key8cReferenceFolders);
-            const clean = await collectFeatureCounts(featureType, n, emptySet, key8cReferenceFolders, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, null, null, null, allowed, _k8cStepStop);
+            const clean = await collectFeatureCounts(featureType, n, emptySet, key8cReferenceFolders, caseIns, needFileDetails8c, clusterOptions8c, _stars8c, _pc8c, null, null, allowed, _k8cStepStop);
             Rc = clean.referenceCounts;
             NR = clean.totalReferenceUnits;
             rfFreq = clean.referenceFileFreqs;
@@ -17695,6 +17716,7 @@ async function computeKeyness8c() {
           rankMaps: buildKey8cRankMaps(rows, advDisp),
           advDisp
         };
+        window._wbcaPfKeep && window._wbcaPfKeep("8c", folder, tStats.targetFillers, tStats.targetCounts);
       }
       if (window._key8cCancelRequested) return void _k8cStop();
       key8cCurrentFolder = targetFoldersList[0], statusEl.textContent = "Rendering…", await new Promise(r => setTimeout(r, 5)), wbcaResetCheck(_rg), await (window._wbcaAfter8cCompute ? window._wbcaAfter8cCompute() : Promise.resolve()), "function" == typeof window._k8cMarkComputed && window._k8cMarkComputed(_k8cSelKeysAtCompute), await renderKey8cResults(), wbcaResetCheck(_rg);
@@ -18167,7 +18189,7 @@ function buildKey8cTable3HTML(measures, N2, rows, rankMaps, gcFM, gcCI, folder, 
     }
     html += "</tr>", html += `<tr class="k8c-t3-val" style="display:none;"><td style="${tdR};border-top:none;"></td>`;
     for (const m of measures) html += `<td style="padding:1px 10px 3px 10px;border:1px solid #e5e7eb;border-top:none;text-align:left;font-size:0.72rem;color:#6b7280;font-family:monospace;">${escapeHtml(_fmtVal(m, rowByFeat[tw[m.key][i] || ""]))}</td>`;
-    html += "</tr>";
+    html += "</tr>", window._wbcaPF && (html += _wbcaPF.row8c(folder, measures, tw, i));
   }
   html += `<tr><td style="${tdSm}">Avg GC freq</td>`;
   for (const m of measures) {
@@ -18683,7 +18705,7 @@ function exportKey8cToCsv() {
         return wl.length ? +(wl.reduce((s, w) => s + w.length, 0) / wl.length).toFixed(2) : 0;
       })]), all.push([]);
     }
-    window._wbca8cPosT3 && _wbca8cPosT3(all, _t3at, sel.length, _sv8cC ? 2 : 1, rows, folder);
+    window._wbcaPF && _wbcaPF.t3(all, _t3at, sel.length, _sv8cC ? 2 : 1, folder), window._wbca8cPosT3 && _wbca8cPosT3(all, _t3at, sel.length, _sv8cC ? 2 : 1, rows, folder);
   }
   try {
     const ovN = Math.max(1, parseInt(document.getElementById("key8cOverlapN")?.value, 10) || 50),
@@ -1773814,7 +1773836,7 @@ const start=()=>{
           return words.length ? +(words.reduce((sum, word) => sum + word.length, 0) / words.length).toFixed(2) : 0;
         })]);
       }
-      window._wbca8cPosT3 && _wbca8cPosT3(data, _t3at, measures.length, _t3sv ? 2 : 1, rows, folder);
+      window._wbcaPF && _wbcaPF.t3(data, _t3at, measures.length, _t3sv ? 2 : 1, folder); window._wbca8cPosT3 && _wbca8cPosT3(data, _t3at, measures.length, _t3sv ? 2 : 1, rows, folder);
       if (showT4) {
         const rankMap = getGCRankMapForKey(gcKey);
         if (rankMap) {
@@ -1774195,7 +1774217,7 @@ const start=()=>{
 
   /* 8b: retain the existing single corpus pass, but yield by elapsed time
      instead of creating a timer after every 20 files. */
-  collectFolderFeatureCounts = async function (featureType, n, folders, caseInsensitive, collectFileDetails = false, clusterOptions = null, starsOpt = null, progressCb = null) {
+  collectFolderFeatureCounts=async function(featureType,n,folders,caseInsensitive,collectFileDetails=false,clusterOptions=null,starsOpt=null,progressCb=null,posFilter=null){
     const byFolder = Object.create(null);
     const folderSet = folders instanceof Set ? folders : new Set(folders);
     const ensureFolder = fname => {
@@ -1774243,14 +1774265,13 @@ const start=()=>{
       };
       if (featureType === "ngram_word" || featureType === "ngram_lemma") {
         /* 53: the Stop / Cancel of 8b) also inside the n-grams of a file */
-        try {
-          await processNgramsForFileAsync(progressCb && progressCb.wbcaStop || null, file, featureType === "ngram_word" ? "word" : "lemma", n, dest, null, caseInsensitive);
-        } catch (e) {
+        try{await processNgramsForFileAsync(progressCb&&progressCb.wbcaStop||null,file,featureType==="ngram_word"?"word":"lemma",n,dest,null,caseInsensitive,posFilter);} catch (e) {
           if (e && !e.wbcaReset && e.message === "Stopped by user") return null;
           throw e;
         }
-      } else _dispatchFeatureProcessor(featureType, n, file, dest, caseInsensitive, clusterOptions, starsOpt);
-      acc._typeCount = dest._typeCount || 0;
+      } else if(posFilter&&posFilter.wbcaCount&&(featureType==="word"||featureType==="word_lemma"))processWordForFile(file,featureType==="word"?"word":"lemma",dest,null,caseInsensitive,posFilter);
+    else _dispatchFeatureProcessor(featureType,n,file,dest,caseInsensitive,clusterOptions,starsOpt);
+    acc._typeCount=dest._typeCount||0;
       acc.totalUnits += dest.totalUnits;
       if (collectFileDetails) acc.fileSizes[wbcaFileKey(file)] = dest.totalUnits;
     }
@@ -1774323,10 +1774344,11 @@ const start=()=>{
         fileDetails: collectFileDetails ? result.referenceFileDetails : null,
         fileName: wbcaFileKey(file)
       } : null;
-      if (posDistOut && posApplicableType(featureType)) {
-        if (inT) recordFeaturePosForFile(file, featureType, n, posDistOut.T, caseInsensitive);
-        if (inR) recordFeaturePosForFile(file, featureType, n, posDistOut.R, caseInsensitive);
-      }
+      if(posDistOut&&posApplicableType(featureType)){
+      const _pcd=posFilter&&posFilter.wbcaCount?posFilter:null;
+      if(inT)recordFeaturePosForFile(file,featureType,n,posDistOut.T,caseInsensitive,_pcd);
+      if(inR)recordFeaturePosForFile(file,featureType,n,posDistOut.R,caseInsensitive,_pcd);
+    }
       if (featureType === "word") processWordForFile(file, "word", destT, destR, caseInsensitive, posFilter);else if (featureType === "word_lemma") processWordForFile(file, "lemma", destT, destR, caseInsensitive, posFilter);else if (featureType === "ngram_word") await processNgramsForFileAsync(stepStop, file, "word", n, destT, destR, caseInsensitive, posFilter);else if (featureType === "ngram_lemma") await processNgramsForFileAsync(stepStop, file, "lemma", n, destT, destR, caseInsensitive, posFilter);else if (featureType === "pframe_word") processPframesForFile(file, "word", n, destT, destR, caseInsensitive, starsOpt);else if (featureType === "pframe_lemma") processPframesForFile(file, "lemma", n, destT, destR, caseInsensitive, starsOpt);else if (featureType === "cluster_word") processClustersForFile(file, "word", n, destT, destR, caseInsensitive, clusterOptions);else if (featureType === "cluster_lemma") processClustersForFile(file, "lemma", n, destT, destR, caseInsensitive, clusterOptions);else if (featureType === "pos_simple") processPosForFile(file, "poss", destT, destR);else if (featureType === "pos_detailed") processPosForFile(file, "posd", destT, destR);else if (featureType === "posgram_simple") processPosgramsForFile(file, "poss", n, destT, destR);else if (featureType === "posgram_detailed") processPosgramsForFile(file, "posd", n, destT, destR);else if (featureType === "wordpos_surface_simple") processWordPosForFile(file, "word", "poss", destT, destR, caseInsensitive);else if (featureType === "wordpos_lemma_simple") processWordPosForFile(file, "lemma", "poss", destT, destR, caseInsensitive);else if (featureType === "wordpos_surface_detailed") processWordPosForFile(file, "word", "posd", destT, destR, caseInsensitive);else if (featureType === "wordpos_lemma_detailed") processWordPosForFile(file, "lemma", "posd", destT, destR, caseInsensitive);else if (featureType === "ngrampos_surface_simple") processNgramPosForFile(file, "word", "poss", n, destT, destR, caseInsensitive);else if (featureType === "ngrampos_lemma_simple") processNgramPosForFile(file, "lemma", "poss", n, destT, destR, caseInsensitive);else if (featureType === "ngrampos_surface_detailed") processNgramPosForFile(file, "word", "posd", n, destT, destR, caseInsensitive);else if (featureType === "ngrampos_lemma_detailed") processNgramPosForFile(file, "lemma", "posd", n, destT, destR, caseInsensitive);
       if (destT) {
         result.totalTargetUnits += destT.totalUnits;
@@ -1776150,6 +1776172,8 @@ const has = (o, k) => !!o && Object.prototype.hasOwnProperty.call(o, k);
 const PRED = { key8b: undefined, key8c: undefined };
 function pred(sec) {
   if (PRED[sec] !== undefined) return PRED[sec];
+  /* the tags were counted (Count, script wbca-pos-count): the cells are not filtered again */
+  if (window._wbcaPosCountOn && window._wbcaPosCountOn(sec)) return (PRED[sec] = null);
   let p = null;
   const g = id => (typeof window._wbcaFAel === "function" ? window._wbcaFAel(sec + id) : $(sec + id)) || {};   /* round 21: as applied */
   const sPat = String(g("PosSFilterInput").value || "").trim(), dPat = String(g("PosDFilterInput").value || "").trim();
@@ -1776181,7 +1776205,7 @@ const NOTE = {
   key8b: ["(the cells whose feature does not match are left out; each folder is ranked again)", "(the cells whose feature does not match are dimmed; the ranks do not change)"],
   key8c: ["(the features that do not match are left out before the four tables are made)", "(the words of Table 3 that do not match are dimmed; the four tables are made from every feature)"]
 };
-function note(sec) { const n = $(sec + "PosFilterNote"); if (n && NOTE[sec]) n.textContent = NOTE[sec][dim(sec) ? 1 : 0]; }
+function note(sec) { const n = $(sec + "PosFilterNote"); if (!n) return; if (window._wbcaPosCountWill && window._wbcaPosCountWill(sec)) { n.textContent = window._wbcaPosCountNote; return; } if (NOTE[sec]) n.textContent = NOTE[sec][dim(sec) ? 1 : 0]; }
 
 /* ---------- one line of parts of speech (a cell of 8b), a word of Table 3 of 8c)) ---------- */
 function line(sl, dl, word, attrs) {
@@ -1776225,12 +1776249,13 @@ function members(f) {
 }
 
 /* the parts of speech of the features of a file, counted as 8a) counts them (recordFeaturePosForFile), only for the features in sel */
-function accum(file, ft, n, dest, ci, sel) {
+function accum(file, ft, n, dest, ci, sel, _pc) {
   file = _wbcaEnsureSents(file);
   if (!dest || !file) return;
   const numMode = getNumberHandlingMode(), field = ft === "word_lemma" || ft === "ngram_lemma" ? "lemma" : "word";
   const addOne = (feat, sp, dp) => {
     if (sel && !sel.has(feat)) return;
+    if (_pc && !_wbcaPosCountUnit(_pc, feat, sp, dp)) return;
     let e = dest.get(feat);
     if (!e) { e = { s: new Map(), d: new Map() }; dest.set(feat, e); }
     if (sp) e.s.set(sp, (e.s.get(sp) || 0) + 1);
@@ -1776356,8 +1776381,8 @@ window._wbca8bPosPass = async function (ft, n, ci, folders, gc, rg) {
     if (!(await step(i, files.length))) return false;
     const f = files[i]; if (!f) continue;
     const t = T.get(f.folder);
-    if (t) accum(f, ft, n, t.dest, ci, t.sel);
-    if (R && R.set.has(f.folder)) accum(f, ft, n, R.dest, ci, R.sel);
+    if (t) accum(f, ft, n, t.dest, ci, t.sel, window._wbcaPosCountPc ? window._wbcaPosCountPc("key8b") : null);
+    if (R && R.set.has(f.folder)) accum(f, ft, n, R.dest, ci, R.sel, window._wbcaPosCountPc ? window._wbcaPosCountPc("key8b") : null);
   }
   for (const [f, t] of T) {
     const rows = key8bAllRows[f];
@@ -1776706,6 +1776731,344 @@ function init() {
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
+<script id="wbca-pos-count">
+/* 7) 8a) 8b) 8c) 9a): Count of the POS filter row. With tags in pos simple / pos detail (as applied) and Show POS columns used, Count =
+   Tagged occurrences only (the default) counts only the occurrences whose tags match: a word unit with the tag of its last token, an n-gram
+   with the tags of its words joined by + (DET+NOUN); exact / partial, OR / AND, main ≥ % and Exclude as in the row filter. The frequencies,
+   the counts of the files (range, dispersion and the statistics made from them) and the parts of speech shown come from these occurrences;
+   the sizes of the corpora, folders and files stay those of all the words. main ≥ %: a tag under this % of a feature's occurrences (in all the
+   files the section counts) is a tagging error, and its occurrences are not counted as that tag; AND: a feature is counted only when it has
+   every tag among its main tags. Exclude: the occurrences without the tags are counted. The rows are not filtered again by the tags.
+   Not used with a General-Corpus Reference (its word list has no parts of speech): Count is greyed, every occurrence is counted and the tags
+   choose the rows, as with All occurrences (filter only), the way the row worked before. Apply filter, Enter, Clear filter and Show POS
+   columns compute the section again when the occurrences to count change. 10) RF keyness follows 8a) / 8b). */
+(function () {
+"use strict";
+if (window._wbcaPosCountUnit) return;
+const $ = id => document.getElementById(id);
+const tick = () => new Promise(r => setTimeout(r, 0));
+const gcOn = (chk, sel) => { try { return typeof getGCReference === "function" && !!getGCReference(chk, sel); } catch (e) { return false; } };
+const SEC = {
+  hf: { ex: "hfFilterExclude", btn: "hfComputeBtn", st: "hfStatus", ft: "hfFeatureTypeSelect", show: "hfShowPos",
+    gc: () => gcOn("gcRefCheckHf", "gcRefSelectHf"),
+    has: () => { try { return !!allHfRows && ((allHfRows.targetList || []).length > 0 || (allHfRows.refList || []).length > 0); } catch (e) { return false; } } },
+  key: { ex: "keyFilterExclude", btn: "keynessBtn", st: "keyStatus", ft: "featureTypeSelect", show: "keyShowPos",
+    gc: () => gcOn("gcRefCheck8a", "gcRefSelect8a"),
+    has: () => { try { return !!allKeynessRows && allKeynessRows.length > 0; } catch (e) { return false; } } },
+  key8b: { ex: "key8bPosFilterExclude", btn: "key8bComputeBtn", st: "key8bStatus", ft: "key8bFeatureType", show: "key8bShowPos",
+    gc: () => gcOn("gcRefCheck8b", "gcRefSelect8b"),
+    has: () => { try { return !!key8bAllRows && Object.keys(key8bAllRows).length > 0; } catch (e) { return false; } } },
+  key8c: { ex: "key8cPosFilterExclude", btn: "key8cComputeBtn", st: "key8cStatus", ft: "key8cFeatureType", show: "key8cShowPos",
+    gc: () => (document.querySelector('input[name="key8cRefMode"]:checked') || {}).value === "gc",
+    has: () => { try { return !!key8cAllResults && Object.keys(key8cAllResults).length > 0; } catch (e) { return false; } } },
+  freq: { ex: "freqTableFilterExclude", btn: "freqTableComputeBtn", st: "freqTableStatus", ft: "freqTableFeatureType", show: "freqShowPos",
+    gc: () => false,
+    has: () => { try { return !!freqTableData; } catch (e) { return false; } } }
+};
+const WHY_GC = "Not used with a General-Corpus Reference: its word list has no parts of speech, so every occurrence is counted and the tags choose the features shown (as All occurrences).";
+const WHY_DIM = "Not used with Count: Tagged occurrences only: only the occurrences with the tags are counted, so no cell is dimmed or left out by the tags.";
+const NOTE_ON = "(only the occurrences with these tags are counted; the table is computed again)";
+
+/* ---------- the row as applied (round 21: _wbcaFAel) ---------- */
+const fa = id => (typeof window._wbcaFAel === "function" ? window._wbcaFAel(id) : $(id)) || {};
+const termsOf = v => String(v == null ? "" : v).split(/[\s,|]+/).filter(Boolean).map(x => x.toLowerCase());
+function cfg(sec) {
+  const g = id => fa(sec + id);
+  return {
+    count: g("PosCount").value === "all" ? "all" : "tagged",
+    S: termsOf(g("PosSFilterInput").value), D: termsOf(g("PosDFilterInput").value),
+    sMode: g("PosSFilterMode").value === "partial" ? "partial" : "exact", sComb: g("PosSFilterCombine").value === "and" ? "and" : "or",
+    dMode: g("PosDFilterMode").value === "partial" ? "partial" : "exact", dComb: g("PosDFilterCombine").value === "and" ? "and" : "or",
+    main: { on: g("PosMainOnly").checked ?? true, pct: Math.max(1, Math.min(50, Number(g("PosMainPct").value) || 10)) },
+    ex: !!fa(SEC[sec].ex).checked
+  };
+}
+const ftOf = sec => ($(SEC[sec].ft) || {}).value || "";
+/* the occurrences counted at a Compute: the row as applied, the Feature type, Show POS columns, the Reference */
+function activeAt(sec, ft) {
+  const c = cfg(sec);
+  const on = c.count === "tagged" && (c.S.length > 0 || c.D.length > 0) && typeof posApplicableType === "function" && posApplicableType(ft) &&
+    (typeof _wbcaShowPosUsed !== "function" || _wbcaShowPosUsed(sec, ft)) && !SEC[sec].gc();
+  return { c, on };
+}
+const sigOf = a => a.on ? JSON.stringify([a.c.S, a.c.D, a.c.sMode, a.c.sComb, a.c.dMode, a.c.dComb, a.c.main.on, a.c.main.pct, a.c.ex]) : "off";
+
+/* ---------- one occurrence: counted or not ---------- */
+function effSet(m, main) {
+  if (!m || !m.size) return null;
+  const list = Array.from(m.entries()).sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+  let L = list;
+  if (main.on && list.length > 1) {
+    const tot = list.reduce((s, x) => s + (Number(x[1]) || 0), 0);
+    if (tot > 0) { const thr = tot * main.pct / 100; L = list.filter((x, i) => i === 0 || (Number(x[1]) || 0) >= thr); }
+  }
+  return new Set(L.map(x => String(x[0]).toLowerCase()));
+}
+const hit = (terms, mode, tag) => {
+  const t = String(tag == null ? "" : tag).toLowerCase();
+  if (!t) return false;
+  return mode === "exact" ? terms.indexOf(t) >= 0 : terms.some(x => t.indexOf(x) >= 0);
+};
+const hasAll = (terms, mode, set) => !!set && terms.every(t => mode === "exact" ? set.has(t) : Array.from(set).some(x => x.indexOf(t) >= 0));
+function eff(pc, feat) {
+  let e = pc.eff.get(feat);
+  if (e) return e;
+  const d = pc.dist.get(feat), c = pc.c;
+  e = { s: effSet(d && d.s, c.main), d: effSet(d && d.d, c.main) };
+  e.okS = !(pc.S.length && c.sComb === "and") || hasAll(pc.S, c.sMode, e.s);
+  e.okD = !(pc.D.length && c.dComb === "and") || hasAll(pc.D, c.dMode, e.d);
+  pc.eff.set(feat, e);
+  return e;
+}
+window._wbcaPosCountUnit = function (pc, feat, tagS, tagD) {
+  const c = pc.c, e = pc.dist ? eff(pc, feat) : null;
+  let m = true;
+  if (pc.S.length) m = hit(pc.S, c.sMode, tagS) && (!e || (e.okS && (!c.main.on || !e.s || e.s.has(String(tagS).toLowerCase()))));
+  if (m && pc.D.length) m = hit(pc.D, c.dMode, tagD) && (!e || (e.okD && (!c.main.on || !e.d || e.d.has(String(tagD).toLowerCase()))));
+  return c.ex ? !m : m;
+};
+
+/* ---------- a Compute: the filter of the counting functions (posFilter), or null ---------- */
+const LAST = Object.create(null);
+function setLast(sec, v) {
+  LAST[sec] = v;
+  try { if ((sec === "key8b" || sec === "key8c") && window._wbcaPos8 && typeof window._wbcaPos8.forget === "function") window._wbcaPos8.forget(sec); } catch (e) {}
+}
+/* folders: the folders whose files the section counts (main ≥ % and AND look at the parts of speech of a feature in all of them);
+   opt.record = false: a count of another section (10)) that does not change the state of this one; opt.stop: Stop of the section */
+window._wbcaPosCountPrep = async function (sec, ft, n, folders, ci, opt) {
+  if (!SEC[sec]) return null;
+  const a = activeAt(sec, ft), rec = !(opt && opt.record === false);
+  if (!a.on) { if (rec) setLast(sec, { on: false, sig: "off", pc: null, ft }); return null; }
+  const c = a.c, pc = { enabled: true, wbcaCount: true, sec, c, S: c.S, D: c.D, dist: null, eff: new Map() };
+  if (c.main.on || (c.S.length && c.sComb === "and") || (c.D.length && c.dComb === "and")) {
+    const set = folders instanceof Set ? folders : new Set(folders || []), dist = new Map();
+    const files = Object.values((typeof corpus !== "undefined" && corpus && corpus.files) || {}).filter(f => f && set.has(f.folder));
+    const st = $(SEC[sec].st), stop = opt && typeof opt.stop === "function" ? opt.stop : null;
+    let t0 = performance.now();
+    for (let i = 0; i < files.length; i++) {
+      recordFeaturePosForFile(files[i], ft, n, dist, ci);
+      if (performance.now() - t0 > 40) {
+        if (st) st.textContent = "Count: reading the parts of speech… " + (i + 1).toLocaleString("en-US") + " / " + files.length.toLocaleString("en-US");
+        await tick(); t0 = performance.now();
+        if (stop && stop()) return null;
+      }
+    }
+    pc.dist = dist;
+  }
+  if (rec) setLast(sec, { on: true, sig: sigOf(a), pc, ft });
+  return pc;
+};
+/* the current results were counted with the tags (the row filter by the tags is then not applied) */
+window._wbcaPosCountOn = sec => !!(LAST[sec] && LAST[sec].on);
+window._wbcaPosCountPc = sec => LAST[sec] && LAST[sec].on ? LAST[sec].pc : null;
+window._wbcaPosCountFt = sec => LAST[sec] && LAST[sec].on ? LAST[sec].ft : null;
+/* the row as applied counts with the tags (the note of 8b) / 8c)) */
+window._wbcaPosCountWill = sec => !!SEC[sec] && activeAt(sec, ftOf(sec)).on;
+window._wbcaPosCountNote = NOTE_ON;
+
+/* ---------- Apply filter / Enter / Clear filter / Show POS columns: computed again when the occurrences to count change ---------- */
+const want = new Set();
+let T = 0;
+function schedule(sec) {
+  if (!SEC[sec]) return;
+  want.add(sec);
+  if (T) return;
+  T = setTimeout(() => { T = setTimeout(() => { T = 0; const l = Array.from(want); want.clear(); l.forEach(check); }, 0); }, 0);
+}
+function check(sec) {
+  const S = SEC[sec], L = LAST[sec];
+  if (!S || !L || !S.has()) return;
+  if (sigOf(activeAt(sec, L.ft || ftOf(sec))) === L.sig) return;
+  const b = $(S.btn);
+  if (b && !b.disabled) b.click();
+}
+window._wbcaPosCountCheck = schedule;
+function hook() {
+  const snap0 = window._wbcaFAsnap;
+  if (typeof snap0 === "function" && !snap0.__wbcaPc) {
+    const w = function (sec) { const r = snap0.apply(this, arguments); schedule(sec); return r; };
+    w.__wbcaPc = true;
+    window._wbcaFAsnap = w;
+  }
+}
+
+/* ---------- greying: Count with a General-Corpus Reference; Dim (ranks unchanged) of 8b) / 8c) with Tagged occurrences only ---------- */
+const PRE = new WeakMap();
+const tgt = e => e.getAttribute("title") ? e : (e.closest("label") || e);
+function setGrey(e, why) {
+  const t = tgt(e);
+  if (why) {
+    if (e.dataset.wbGrPosOff && !e.dataset.wbGrPcOff) return;          /* greyed with its POS filter row (Show POS columns not used) */
+    if (!e.dataset.wbGrPcOff) { if (e.disabled) return; e.disabled = true; e.dataset.wbGrPcOff = "1"; }
+    if (!PRE.has(t)) PRE.set(t, t.getAttribute("title") || "");
+    const base = PRE.get(t), full = why + (base ? "\n" + base : "");
+    if (t.getAttribute("title") !== full) t.setAttribute("title", full);
+  } else if (e.dataset.wbGrPcOff) {
+    e.disabled = false; delete e.dataset.wbGrPcOff;
+    if (PRE.has(t)) { const base = PRE.get(t); PRE.delete(t); if (base) t.setAttribute("title", base); else t.removeAttribute("title"); }
+  }
+}
+function grey() {
+  for (const sec of Object.keys(SEC)) {
+    const c = $(sec + "PosCount");
+    if (!c) continue;
+    const why = SEC[sec].gc() ? WHY_GC : "";
+    setGrey(c, why);
+    if (sec === "key8b" || sec === "key8c") { const d = $(sec + "PosFilterDisplay"); if (d) setGrey(d, !why && c.value !== "all" ? WHY_DIM : ""); }
+  }
+}
+let G = 0;
+function later() { if (G) return; G = setTimeout(() => { G = setTimeout(() => { G = 0; try { grey(); } catch (e) { console.error("[POS filter Count]", e); } }, 0); }, 0); }
+
+function init() {
+  hook();
+  Object.keys(SEC).forEach(sec => {
+    const b = $(SEC[sec].show);
+    if (b) b.addEventListener("change", () => schedule(sec));
+  });
+  /* Clear filter of 7) / 8a) / 9a) (the rows emptied; applied as Apply filter is) */
+  /* 9a): Enter in its text boxes applies the row (script wbca-filter-apply) */
+  ["freqTableFeatureFilter", "freqPosSFilterInput", "freqPosDFilterInput"].forEach(id => { const e = $(id); if (e) e.addEventListener("keyup", ev => { if (ev.key === "Enter") schedule("freq"); }); });
+  document.addEventListener("click", ev => {
+    const b = ev.target && ev.target.closest && ev.target.closest("button");
+    if (!b) return;
+    const oc = b.getAttribute("onclick") || "";
+    if (b.id === "hfFilterClearBtn") schedule("hf");
+    else if (/clearKeynessFilter\(/.test(oc)) schedule("key");
+    else if (/clearFreqTable\w*Filter\w*\(|clearAllFreqTableFilters\(/.test(oc)) schedule("freq");
+  }, true);
+  document.addEventListener("change", later, true);
+  document.addEventListener("input", later, true);
+  document.addEventListener("click", later, true);
+  window.addEventListener("load", () => { hook(); later(); });
+  later();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+<script id="wbca-pos-count-kwic">
+/* 7) 8a) 8b) 8c) 9a) (9b) from 9a)): a table counted with the tags (Count = Tagged occurrences only, script wbca-pos-count). A click on
+   one of its features opens 4) KWIC with only the occurrences counted: the hits of the feature whose tags pass the POS filter row as it
+   was applied (the tags of a word, of the words of an n-gram joined by +, main ≥ %, AND, Exclude; _wbcaPosCountUnit), as "after
+   filter" (the status line says so). A click on a tag (pos simple / pos detail) opens its own view as before. The filter stays with
+   Recompute KWIC and the other settings of 4), and goes with Clear of 4), a new search (the feature typed, its type or the search mode
+   changed) and any other jump to 4). */
+(function () {
+"use strict";
+if (window._wbcaKwicCountKeep) return;
+const $ = id => document.getElementById(id);
+const NAME = { hf: "7)", key: "8a)", key8b: "8b)", key8c: "8c)", freq: "9a)" };
+const NOTE = "only the occurrences counted in § (Count: Tagged occurrences only)";
+let KC = null;   /* { sec, pc, feat, f, n, field, armed, active, same } */
+
+/* the feature of a counted table under a click: [section, feature] */
+function featureAt(t) {
+  if (!t || !t.closest) return null;
+  if (t.closest('[class*="pos-link"], .filler-item, .fillers-cell, .wbca-pf-fill, input, select, button, label, a[href], summary')) return null;
+  let el;
+  if ((el = t.closest("#hfTableBody .hf-feature-link"))) return ["hf", el.dataset.feature || ""];
+  if ((el = t.closest("#keyTableBody tr[data-row-idx]"))) {
+    try { const r = lastKeynessRows[parseInt(el.getAttribute("data-row-idx"), 10)]; return r ? ["key", String(r.feature)] : null; } catch (e) { return null; }
+  }
+  if ((el = t.closest("#key8bTableWrapper td[data-feature]"))) return ["key8b", el.getAttribute("data-feature") || ""];
+  if ((el = t.closest("#key8cResultsArea td[data-word]"))) return ["key8c", el.getAttribute("data-word") || ""];
+  if ((el = t.closest("#freqTable .freq-value-cell"))) {
+    try { return ["freq", String((window._freqVisibleFeatures || [])[parseInt(el.getAttribute("data-fi"), 10)] ?? "")]; } catch (e) { return null; }
+  }
+  if ((el = t.closest("#freqTable .freq-feature-link, #freqTable .freq-feature-text"))) return ["freq", el.getAttribute("data-feature") || ""];
+  if ((el = t.closest('[onclick*="navigateToKwicFromChiSquare"]'))) {
+    const m = (el.getAttribute("onclick") || "").match(/navigateToKwicFromChiSquare(?:Detail)?\((['"])(.*?)\1/);
+    return m ? ["freq", m[2]] : null;
+  }
+  return null;
+}
+/* a click on a feature of a counted table: armed for the jump that follows (its clearKwicFilters) */
+function arm(ev) {
+  const h = featureAt(ev.target);
+  if (!h || !h[1] || typeof window._wbcaPosCountPc !== "function") return;
+  const sec = h[0], pc = window._wbcaPosCountPc(sec);
+  if (!pc) { KC = null; return; }
+  const ft = (typeof window._wbcaPosCountFt === "function" && window._wbcaPosCountFt(sec)) || "";
+  const feat = String(h[1]), ng = /^ngram_/.test(ft);
+  KC = { sec, pc, feat, f: feat.toLowerCase(), n: ng ? feat.trim().split(/\s+/).length : 1, field: /lemma/.test(ft) ? "lemma" : "word", armed: true, active: false, same: false };
+  const k = KC;
+  setTimeout(() => { if (KC === k && k.armed) KC = null; }, 1500);
+}
+function wrapClear() {
+  const f = window.clearKwicFilters;
+  if (typeof f !== "function" || f.__wbcaKc) return;
+  const w = function () {
+    const r = f.apply(this, arguments);
+    const k = KC;
+    if (k) {
+      if (k.armed) { k.armed = false; k.active = true; k.same = true; setTimeout(() => { k.same = false; }, 0); }
+      else if (!k.same) KC = null;
+    }
+    return r;
+  };
+  w.__wbcaKc = true;
+  window.clearKwicFilters = w;
+}
+const num = () => (typeof getNumberHandlingMode === "function" ? getNumberHandlingMode() : undefined);
+/* applyKwicFilter: the rows kept */
+window._wbcaKwicCountKeep = function (r) {
+  const k = KC;
+  if (!k || !k.active) return true;
+  let cur = "";
+  try { cur = String((typeof currentKwicFeature !== "undefined" && currentKwicFeature) || ""); } catch (e) {}
+  if (cur.toLowerCase() !== k.f) { KC = null; return true; }        /* another search of 4) */
+  /* a row of a Merge-targets group read from the file it copies (__wbca_group__<id>__<group>, __wbca_alias__<id>__<folder>) */
+  const files = (typeof corpus !== "undefined" && corpus && corpus.files) || {},
+    f = files[r.fileId] || files[String(r.fileId).replace(/^__wbca_(?:group|alias)__(.+?)__.*$/, "$1")], toks = f && f.tokens;
+  if (!toks || r.matchStart == null || r.matchEnd == null) return true;
+  let s, d;
+  if (k.n > 1) {
+    const sl = toks.slice(r.matchStart, r.matchEnd), us = wbcaLexicalUnits(sl, k.field, true, num());
+    if (us.length !== k.n) return true;
+    s = us.map(u => wbcaUnitPosTag(sl, u, "poss")).join("+");
+    d = us.map(u => wbcaUnitPosTag(sl, u, "posd")).join("+");
+  } else {
+    const u = { start: r.matchStart, end: r.matchEnd };
+    s = wbcaUnitPosTag(toks, u, "poss"); d = wbcaUnitPosTag(toks, u, "posd");
+  }
+  return window._wbcaPosCountUnit(k.pc, k.feat, s, d);
+};
+function note() {
+  const k = KC, st = $("kwicStatus");
+  if (!k || !k.active || !st || !st.textContent) return;
+  const t = NOTE.replace("§", NAME[k.sec] || "");
+  if (st.textContent.indexOf(t) < 0) st.textContent += " — " + t;
+}
+function wrapApply() {
+  ["applyKwicFilter", "applyKwicFilterWithCallback"].forEach(n => {
+    const f = window[n];
+    if (typeof f !== "function" || f.__wbcaKc) return;
+    const w = function () { const r = f.apply(this, arguments); try { note(); } catch (e) {} return r; };
+    w.__wbcaKc = true;
+    window[n] = w;
+  });
+}
+function init() {
+  wrapClear(); wrapApply();
+  window.addEventListener("click", arm, true);
+  /* Clear of 4), or a new search (the feature typed, its type or the search mode changed): every occurrence again; Recompute KWIC with
+     the same feature keeps the occurrences counted */
+  document.addEventListener("click", ev => {
+    const b = ev.target && ev.target.closest && ev.target.closest("#kwicClearBtn");
+    if (b) KC = null;
+  }, true);
+  ["kwicFeatureInput", "kwicFeatureTypeSelect", "kwicSearchMode"].forEach(id => {
+    const e = $(id);
+    if (e) { e.addEventListener("input", () => { KC = null; }); e.addEventListener("change", () => { KC = null; }); }
+  });
+  window.addEventListener("load", () => { wrapClear(); wrapApply(); });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+
+
 <script id="wbca-download-settings">
 /* Excel and CSV downloads: the settings are saved with the data, for reproducibility.
    - Excel (.xlsx): a sheet named "setting" is added after the sheets of the data.
@@ -1777298,5 +1777661,824 @@ window._wbcaLockGuard = function (e) {
 })();
 </script>
 
+<script id="wbca-pf-fillers">
+/* the fillers of the p-frames in 7), 8a), 8b), 8c) and 9a).
+   Every section that counts p-frames has, next to Stars (*) and Mode: Filler display (Full n-gram (frequency) / * filler only —
+   word(s) (frequency); in 8b), 8c) and 9a) also Off, which is the setting at the start: no fillers are shown or counted there, which
+   keeps those tables light) and Fillers: top n (0 = all; at the start 0 in 7) and 8a), 5 in 8b), 8c) and 9a)). The fillers of a p-frame are the words in its * (one word for
+   one *, the words of all the * together for two or more), the most frequent first, shown as in 7) and 8a): a strip of
+   "n-gram(frequency)" that scrolls sideways inside its cell; a filler opens 4) KWIC with its n-gram (8b) / 8c): in its folder).
+   - 7) / 8a): the columns Fillers_T / Fillers_R; 8b): under the p-frame in each cell of the table (the Reference column too);
+     8c): a row "Fillers" under each rank of Table 3; 9a): a row "Fillers" above TOTAL (the fillers in all the groups of the table).
+   - the top n (any n) of 7), 8a), 8b), 8c): the fillers that Compute counted, when they give the top n exactly. Compute keeps at most 200
+     kinds of fillers for each p-frame (a filler first met after that is not kept, and the fillers kept go on being counted), so the
+     fillers that it did not keep add up to (the frequency of the p-frame − the fillers kept); the top n is exact when that sum is less
+     than the n-th frequency (none of them can come into the top n; 0 (all): when the sum is 0). A list merged from folders (the
+     Reference of 8b)) is exact when no folder kept 200 kinds, or by the same sums for the folders that did. Otherwise, and in 9a) always
+     (its Compute keeps no fillers), the fillers of the p-frame are counted again, exactly, in the files of the last Compute of the section
+     (in Merge mode, its groups) with its settings (feature type, n, Stars, Mode, Case-insensitive; the p-frame and sentence settings of
+     1)); the counts are kept for the p-frames counted, folder by folder.
+   - Copy Table and the exports take the fillers as shown, with "top n" (or "all") in their headings; they wait while the fillers are
+     counted. Excel: a cell holds at most 32,767 characters, so a longer list of fillers ends with "… (+N more: sheet Fillers)" and the
+     sheet Fillers lists all of them; Copy Table and Export to CSV keep the whole list. */
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const XL = 32767;
+const REF = "⁣REF", RPRE = "⁣R:", ALL = "⁣ALL";
+const SECS = ["7", "8a", "8b", "8c", "9a"];
+/* the "; " between the fillers in Copy Table and the exports of 7) and 8a) (the page shows the same gap as before) */
+const SEP78 = true;
+const CFG = {
+  "7": { name: "7)", block: ".hfPframeStarsBlock", disp: "hfPframeFillerDisplay", top: "hfPframeFillerTopN", status: "hfStatus", note: "hfPfNote" },
+  "8a": { name: "8a)", block: ".keyPframeStarsBlock", disp: "keyPframeFillerDisplay", top: "keyPframeFillerTopN", status: "keyStatus", note: "keyPfNote" },
+  "8b": { name: "8b)", block: ".key8bPframeStarsBlock", disp: "key8bPframeFillerDisplay", top: "key8bPframeFillerTopN", status: "key8bStatus", note: "key8bPfNote", off: true },
+  "8c": { name: "8c)", block: ".key8cPframeStarsBlock", disp: "key8cPframeFillerDisplay", top: "key8cPframeFillerTopN", status: "key8cStatus", note: "key8cPfNote", off: true },
+  "9a": { name: "9a)", block: ".freqTablePframeStarsBlock", disp: "freqTablePframeFillerDisplay", top: "freqTablePframeFillerTopN", status: "freqTableStatus", note: "freqTablePfNote", off: true }
+};
+/* the result each state belongs to (the page's own variables; 7): the fillers that its Compute counted, which it keeps before it draws
+   the table) */
+const RES = {
+  "7": () => window._wbcaHf7TargetFillers || null,
+  "8a": () => typeof allKeynessRows !== "undefined" ? allKeynessRows : null,
+  "8b": () => typeof key8bAllResults !== "undefined" ? key8bAllResults : null,
+  "8c": () => typeof key8cAllResults !== "undefined" ? key8cAllResults : null,
+  "9a": () => typeof freqTableData !== "undefined" ? freqTableData : null
+};
+const NONE = {};
+const S = {};
+SECS.forEach(s => { S[s] = { cur: null, pend: null, prev: undefined }; });
+let GEN = 0;
+
+/* ---------- the settings of a Compute ---------- */
+function masksOf(n, stars) {
+  const sCount = stars && Number.isInteger(stars.count) ? Math.max(1, Math.min(n - 1, stars.count)) : 1,
+    upto = !!(stars && stars.mode === "upto"),
+    allowFirst = !!(stars && stars.allowFirstStar), allowLast = !stars || stars.allowLastStar !== false,
+    kList = [], allowed = [], masks = [];
+  if (upto) for (let k = 1; k <= sCount; k++) kList.push(k); else kList.push(sCount);
+  for (let p = 0; p < n; p++) (p !== 0 || allowFirst) && (p !== n - 1 || allowLast) && allowed.push(p);
+  for (const k of kList) {
+    if (k > allowed.length) continue;
+    const rec = (start, chosen) => {
+      if (chosen.length === k) { const m = new Uint8Array(n); chosen.forEach(c => { m[c] = 1; }); masks.push(m); return; }
+      for (let i = start; i <= allowed.length - (k - chosen.length); i++) { chosen.push(allowed[i]); rec(i + 1, chosen); chosen.pop(); }
+    };
+    rec(0, []);
+  }
+  return masks;
+}
+const arr = x => x == null ? [] : Array.isArray(x) ? x.slice() : typeof x.forEach === "function" ? Array.from(x) : [];
+/* called by each Compute when it reads Stars (*): the files and the settings of this Compute (returns stars unchanged) */
+function begin(sec, stars, o) {
+  try {
+    const b = S[sec]; if (!b) return stars;
+    const ft = String(o && o.featureType || "");
+    LONG.clear();
+    if (!/^pframe_/.test(ft)) { b.pend = NONE; b.prev = o && o.commit ? NONE : RES[sec](); return stars; }
+    const n = parseInt(o.n, 10) || 0, cp = typeof corpus !== "undefined" ? corpus : null;
+    const c = { sec, gen: ++GEN, ft, field: ft === "pframe_lemma" ? "lemma" : "word", n, ci: !!o.caseInsensitive,
+      stars: stars ? Object.assign({}, stars) : null, masks: masksOf(n, stars),
+      numMode: typeof getNumberHandlingMode === "function" ? getNumberHandlingMode() : "keep",
+      corpus: cp, T: arr(o.T), R: arr(o.R), scope: o.scope || "", A: null,
+      per: new Map(), done: new Map(), lists: new Map(), keep: new Map(), keepN: new Map(), clean: new Map(), dec: new Map(), rows: new Map(),
+      chain: null, busy: false, ref: undefined };
+    if (sec === "9a") {
+      if (c.scope === "all") { const fs = new Set(); for (const f of Object.values((cp && cp.files) || {})) f && fs.add(f.folder); c.A = Array.from(fs); }
+      else c.A = c.scope === "reference" ? c.R : c.T;
+    }
+    b.pend = c; b.prev = o.commit ? NONE : RES[sec]();
+  } catch (e) { console.warn("[WBCA fillers]", e); }
+  return stars;
+}
+/* the state of the result shown (null: none, or not a p-frame result) */
+function cur(sec) {
+  const b = S[sec]; if (!b) return null;
+  const r = RES[sec]();
+  if (b.pend && (b.prev === NONE || r !== b.prev)) { b.cur = b.pend === NONE ? null : b.pend; if (b.cur) b.cur.ref = r; b.pend = null; }
+  if (b.cur && b.cur.ref !== r) b.cur = null;
+  return b.cur;
+}
+const live = (sec, c) => S[sec].cur === c || S[sec].pend === c;
+/* 8c): the fillers that Compute counted in each Target folder; 8b): the folders of the Reference of each Target folder (Exclude the
+   Target folder from the Reference) */
+function keep(sec, folder, map, counts) { const b = S[sec], c = b && (b.pend && b.pend !== NONE ? b.pend : b.cur); c && (c.keep.set(folder, map || null), counts && c.keepN.set(folder, counts)); }
+function clean(sec, folder, set) { const b = S[sec], c = b && (b.pend && b.pend !== NONE ? b.pend : b.cur); c && c.clean.set(folder, arr(set)); }
+function drop(sec) { (sec ? [sec] : SECS).forEach(s => { S[s].cur = null; S[s].pend = null; S[s].prev = undefined; }); LONG.clear(); }
+
+/* ---------- the controls ---------- */
+function disp(sec) { const v = ($(CFG[sec].disp) || {}).value; return v === "filler" ? "filler" : v === "off" && CFG[sec].off ? "off" : "full"; }
+const on = sec => disp(sec) !== "off";
+/* Fillers: top n at the start: 0 (all) in 7) and 8a), 5 in 8b), 8c) and 9a) */
+const TOP0 = sec => (sec === "7" || sec === "8a" ? 0 : 5);
+function topN(sec) { const e = $(CFG[sec].top), v = e ? parseInt(e.value, 10) : TOP0(sec); return Number.isFinite(v) && v >= 0 ? v : TOP0(sec); }
+const suf = sec => { const n = topN(sec); return n === 0 ? "for *, all" : "for *, top " + n; };
+const restore = (key, f) => typeof _pframeRestoreNgram === "function" ? _pframeRestoreNgram(key, f) : key;
+const lab = (key, f, mode) => mode === "filler" ? String(f) : restore(key, f);
+const sortList = a => a.sort((x, y) => y[1] - x[1] || String(x[0]).localeCompare(String(y[0])));
+
+/* ---------- counting ---------- */
+function countFile(c, file, want, out) {
+  file = _wbcaEnsureSents(file);
+  if (!file || c.n <= 1) return;
+  const n = c.n, masks = c.masks, nm = c.numMode;
+  for (const sent of _wbcaCountSents(file)) for (const seg of wbcaLexicalSegments(file.tokens, sent.tokenStart, sent.tokenEnd)) {
+    const a = getMergedFieldValues(seg.tokens, c.field, c.ci, nm), L = a.length;
+    if (L < n) continue;
+    for (let i = 0; i <= L - n; i++) for (let m = 0; m < masks.length; m++) {
+      const mask = masks[m];
+      let key = "";
+      for (let j = 0; j < n; j++) { j && (key += " "); key += mask[j] ? "*" : a[i + j]; }
+      if (!want.has(key)) continue;
+      let fil = "";
+      for (let j = 0; j < n; j++) if (mask[j]) fil = fil ? fil + " " + a[i + j] : a[i + j];
+      let fm = out.get(key);
+      fm || out.set(key, fm = new Map());
+      fm.set(fil, (fm.get(fil) || 0) + 1);
+    }
+  }
+}
+function foldersOf(c, scope) {
+  if (c.sec === "7" || c.sec === "8a") return scope === "R" ? c.R : c.T;
+  if (scope === REF) return c.R;
+  if (scope === ALL) return c.A || [];
+  if (scope.indexOf(RPRE) === 0) { const f = scope.slice(RPRE.length); return c.clean.has(f) ? c.clean.get(f) : c.R; }
+  return [scope];
+}
+/* the (folder → p-frames) not counted yet among the pairs [scope, p-frame] */
+function missOf(c, pairs) {
+  const miss = new Map();
+  for (const [scope, key] of pairs) {
+    if (!key) continue;
+    for (const f of foldersOf(c, scope)) {
+      const d = c.done.get(f);
+      if (d && d.has(key)) continue;
+      let s = miss.get(f);
+      s || miss.set(f, s = new Set());
+      s.add(key);
+    }
+  }
+  return miss;
+}
+async function pass(c, sec, miss) {
+  const files = [];
+  for (const f of Object.values((c.corpus && c.corpus.files) || {})) f && miss.has(f.folder) && files.push(f);
+  const total = files.length;
+  let k = 0, t0 = performance.now();
+  c.busy = true; say(sec, "Counting the fillers of the p-frames (" + suf(sec) + ")… 0/" + total + " files");
+  try {
+    for (const f of files) {
+      let out = c.per.get(f.folder);
+      out || c.per.set(f.folder, out = new Map());
+      countFile(c, f, miss.get(f.folder), out);
+      k++;
+      if (performance.now() - t0 > 40) {
+        say(sec, "Counting the fillers of the p-frames (" + suf(sec) + ")… " + k + "/" + total + " files");
+        await new Promise(r => setTimeout(r, 0));
+        if (!live(sec, c)) return false;
+        t0 = performance.now();
+      }
+    }
+    miss.forEach((keys, folder) => { let d = c.done.get(folder); d || c.done.set(folder, d = new Set()); keys.forEach(x => d.add(x)); });
+    c.lists.clear();
+    return true;
+  } catch (e) { console.error("[WBCA fillers]", e); return false; }
+  finally { c.busy = false; say(sec, ""); }
+}
+/* one count at a time per section; each waits for the one before it, then counts what is still missing */
+function run(c, sec, pairs) {
+  c.chain = (c.chain || Promise.resolve(true)).then(() => {
+    if (!live(sec, c)) return false;
+    const miss = missOf(c, pairs);
+    return miss.size ? pass(c, sec, miss) : true;
+  });
+  return c.chain;
+}
+/* the exact fillers of a p-frame in a scope ([[filler, frequency], …], the most frequent first); null: not counted yet */
+function listOf(c, scope, key) {
+  const sk = scope + "\u0002" + key;
+  if (c.lists.has(sk)) return c.lists.get(sk);
+  const acc = new Map();
+  for (const f of foldersOf(c, scope)) {
+    const d = c.done.get(f);
+    if (!d || !d.has(key)) return null;
+    const m = c.per.get(f), fm = m && m.get(key);
+    fm && fm.forEach((v, w) => acc.set(w, (acc.get(w) || 0) + v));
+  }
+  const a = sortList(Array.from(acc));
+  c.lists.set(sk, a);
+  return a;
+}
+/* the fillers that Compute counted ({filler: frequency}) */
+function cmap(c, scope, key) {
+  const g = o => o ? o[key] : undefined;
+  try {
+    if (c.sec === "7") return g(scope === "R" ? window._wbcaHf7ReferenceFillers : window._wbcaHf7TargetFillers);
+    if (c.sec === "8a") return g(scope === "R" ? (typeof lastReferenceFillers !== "undefined" ? lastReferenceFillers : null) : (typeof lastTargetFillers !== "undefined" ? lastTargetFillers : null));
+    if (c.sec === "8b") {
+      const all = typeof key8bAllFillers !== "undefined" ? key8bAllFillers : null;
+      if (scope === REF) return g(typeof key8bRefCache !== "undefined" && key8bRefCache ? key8bRefCache.refFillers : null);
+      if (scope.indexOf(RPRE) === 0) { const x = all && all[scope.slice(RPRE.length)]; return g(x && x.referenceFillers); }
+      const x = all && all[scope]; return g(x && x.targetFillers);
+    }
+    if (c.sec === "8c") return g(c.keep.get(scope));
+  } catch (e) {}
+  return undefined;
+}
+/* ---------- the fillers that Compute counted: are they the top n? ---------- */
+const CAP = 200;   /* Compute keeps at most this many kinds of fillers for each p-frame (in one pass over the files of a scope) */
+/* the lists merged from the folders of a Reference (8b)): for each merged list of a p-frame, the folders whose list of that p-frame was
+   full ([{m: their list, F: the frequency of the p-frame there}]); a merged list without an entry was merged from lists that were not */
+const PARTS = new WeakMap();
+let HOOKED = false;
+const sumOf = m => { let t = 0; for (const w in m) t += m[w]; return t; };
+/* the frequency of the p-frame in a scope, counted by the same Compute (in the same pass as its fillers); undefined: not known */
+function rowsOf(c, name, list) {
+  let r = c.rows.get(name);
+  if (!r) { r = new Map(); for (const x of list || []) x && x.feature != null && r.set(String(x.feature), x); c.rows.set(name, r); }
+  return r;
+}
+function freqOf(c, scope, key) {
+  try {
+    if (c.sec === "7") { const h = typeof hfRawCounts !== "undefined" ? hfRawCounts : null, t = h && (scope === "R" ? h.Rcounts : h.Tcounts); return t ? t[key] : undefined; }
+    if (c.sec === "8a") { const x = rowsOf(c, "8a", typeof allKeynessRows !== "undefined" ? allKeynessRows : null).get(key); return x ? (scope === "R" ? x.fR : x.fT) : undefined; }
+    if (c.sec === "8b") {
+      if (scope === REF || scope.indexOf(RPRE) === 0) return undefined;
+      const all = typeof key8bAllRows !== "undefined" ? key8bAllRows : null, x = rowsOf(c, "8b\u0002" + scope, all && all[scope]).get(key);
+      return x ? x.fT : undefined;
+    }
+    if (c.sec === "8c") { const t = c.keepN.get(scope); return t ? t[key] : undefined; }
+  } catch (e) {}
+  return undefined;
+}
+/* the lists that may lack fillers: [{m, R}] (R: the frequency of the fillers that the list m did not keep, R > 0); null: not known */
+function fullsOf(c, scope, key, m) {
+  if (typeof m.__n === "number") {   /* one list, counted in one pass */
+    if (m.__n < CAP) return [];
+    const F = freqOf(c, scope, key);
+    if (typeof F !== "number" || !(F >= 0)) return null;
+    const R = F - sumOf(m);
+    return R > 0 ? [{ m, R }] : [];
+  }
+  if (!HOOKED) { let k = 0; for (const w in m) if (++k >= CAP) return null; return []; }
+  const p = PARTS.get(m);
+  if (!p) return [];
+  const out = [];
+  for (const x of p) {
+    if (typeof x.F !== "number" || !(x.F >= 0)) return null;
+    const R = x.F - sumOf(x.m);
+    R > 0 && out.push({ m: x.m, R });
+  }
+  return out;
+}
+/* the top n from the list ent (the most frequent first) when it is exact, else null. A filler that a list m did not keep has at most
+   R more there; the fillers shown must have been kept in every such list (their frequencies are then exact), and no other filler can
+   reach the n-th frequency */
+function decide(ent, fl, n) {
+  if (!fl.length) return n ? ent.slice(0, n) : ent;
+  if (!n || n > ent.length) return null;
+  const U = fl.reduce((a, x) => a + x.R, 0), cn = ent[n - 1][1];
+  if (!(cn > U)) return null;
+  const miss = w => { let u = 0; for (const x of fl) x.m[w] === undefined && (u += x.R); return u; };
+  for (let i = 0; i < n; i++) if (miss(ent[i][0]) > 0) return null;
+  for (let i = n; i < ent.length; i++) { const u = miss(ent[i][0]); if (u > 0 && ent[i][1] + u >= cn) return null; }
+  return ent.slice(0, n);
+}
+/* the fillers from Compute ([[filler, frequency], …]) when they are the top n exactly; null: the p-frame is to be counted */
+function fromCompute(c, scope, key, n) {
+  if (c.sec === "9a") return null;
+  const m = cmap(c, scope, key);
+  if (!m) return [];
+  const fl = fullsOf(c, scope, key, m);
+  if (fl === null) return null;
+  if (fl.length) {
+    const dk = scope + "\u0002" + key + "\u0002" + n;
+    if (c.dec.get(dk) === false) return null;
+    const r = decide(sortList(Object.entries(m)), fl, n);
+    r || c.dec.set(dk, false);
+    return r;
+  }
+  const ent = sortList(Object.entries(m));
+  return n ? ent.slice(0, n) : ent;
+}
+/* does the p-frame have to be counted for the top n? */
+function needs(c, scope, key, n) {
+  if (c.sec === "9a") return true;
+  const m = cmap(c, scope, key);
+  if (!m) return false;
+  const fl = fullsOf(c, scope, key, m);
+  if (fl === null) return true;
+  return fl.length > 0 && fromCompute(c, scope, key, n) === null;
+}
+/* the fillers shown: [[filler, frequency], …]; null: being counted; undefined: no p-frame result, or Filler display is Off */
+function items(sec, scope, key) {
+  const c = cur(sec);
+  if (!c || !on(sec)) return undefined;
+  const n = topN(sec), a = fromCompute(c, scope, key, n);
+  if (a) return a;
+  const x = listOf(c, scope, key);
+  return x ? (n ? x.slice(0, n) : x) : null;
+}
+
+/* ---------- the strips ---------- */
+const OLD = sec => sec === "7" || sec === "8a";
+const sepTxt = sec => (OLD(sec) && !SEP78 ? " " : "; ");
+const sepHtml = sec => (OLD(sec) && !SEP78 ? " " : '<span class="wbca-pf-sep">;</span> ');
+let DRY = null;   /* the p-frames that an export will need ([scope, p-frame]), collected while its rows are made */
+/* the long lists (Excel): text → what it lists */
+const LONG = new Map(), CUTS = [];
+function reg(sec, scope, key, it, mode) {
+  const labels = it.map(([f, n]) => lab(key, f, mode) + "(" + n + ")"), t = labels.join(sepTxt(sec));
+  t.length > XL && LONG.set(t, { sec, scope, key, labels, it, mode });
+  return t;
+}
+const WAIT = "counting…";
+function strip(sec, scope, key, side) {
+  const it = items(sec, scope, key), old = OLD(sec);
+  const A = ' data-pf-sec="' + sec + '" data-pf-scope="' + esc(scope) + '" data-pf-key="' + esc(key) + '"' + (side ? ' data-pf-side="' + side + '"' : "");
+  const cls = old ? "wbca-filler-scroll" : "wbca-filler-scroll wbca-pf-fill";
+  if (it === undefined) return old ? '<span class="text-xs">-</span>' : "";
+  if (it === null) { later(sec); return '<div class="' + cls + ' wbca-pf-wait"' + A + ">" + WAIT + "</div>"; }
+  if (!it.length) return '<span class="text-xs wbca-pf-none"' + A + ">-</span>";
+  const mode = disp(sec), sep = sepHtml(sec), sd = side ? ' data-side="' + side + '"' : "";
+  const aria = old ? (side === "reference" ? "Reference p-frame fillers" : "Target p-frame fillers") : "p-frame fillers";
+  let h = '<div class="' + cls + '" tabindex="0" role="group" aria-label="' + aria + '"' + A + ">", len = 0;
+  for (let i = 0; i < it.length; i++) {
+    const [f, n] = it[i], l = lab(key, f, mode);
+    i && (h += sep);
+    h += '<span class="filler-item" data-filler="' + esc(f) + '" data-pframe="' + esc(key) + '"' + sd + ">" + esc(l) + "(" + n + ")</span>";
+    len += l.length + 4;
+  }
+  len > XL - 200 && reg(sec, scope, key, it, mode);
+  return h + "</div>";
+}
+/* the text of the fillers for Copy Table and the exports made from data (8b), 8c)): "n-gram(frequency); …"; "-": none */
+function text(sec, scope, key) {
+  if (DRY) { DRY.push([scope, key]); return ""; }
+  const it = items(sec, scope, key);
+  if (!it) { it === null && later(sec); return ""; }
+  return it.length ? reg(sec, scope, key, it, disp(sec)) : "-";
+}
+
+/* ---------- the strips that wait for their count ---------- */
+const T = {};
+function later(sec) { if (T[sec]) return; T[sec] = setTimeout(() => { T[sec] = 0; fill(sec); }, 30); }
+function waits(sec) { return Array.from(document.querySelectorAll('.wbca-pf-wait[data-pf-sec="' + sec + '"]')); }
+function fill(sec) {
+  const c = cur(sec); if (!c) return;
+  const pairs = waits(sec).map(el => [el.getAttribute("data-pf-scope"), el.getAttribute("data-pf-key")]);
+  if (!pairs.length) return;
+  run(c, sec, pairs).then(ok => { ok && cur(sec) === c && put(sec, true); });
+}
+/* the strips drawn again (onlyWait: the strips that wait for their count) */
+function put(sec, onlyWait) {
+  const els = onlyWait ? waits(sec) : Array.from(document.querySelectorAll('[data-pf-sec="' + sec + '"]'));
+  for (const el of els) {
+    const scope = el.getAttribute("data-pf-scope"), key = el.getAttribute("data-pf-key"), side = el.getAttribute("data-pf-side");
+    if (onlyWait && items(sec, scope, key) === null) continue;
+    const h = strip(sec, scope, key, side);
+    if (h) el.outerHTML = h; else el.remove();
+  }
+  labels(sec);
+}
+/* the headings that name the setting */
+function setTh(th, t) {
+  if (!th) return;
+  const n = Array.from(th.childNodes).find(x => x.nodeType === 3 && x.nodeValue.trim());
+  if (n) { n.nodeValue !== t && (n.nodeValue = t); } else th.insertBefore(document.createTextNode(t), th.firstChild);
+}
+function labels(sec) {
+  const s = suf(sec);
+  if (sec === "7") { setTh(document.querySelector("#hfTable th.hf-fillers-t"), "Fillers_T (" + s + ")"); setTh(document.querySelector("#hfTable th.hf-fillers-r"), "Fillers_R (" + s + ")"); }
+  if (sec === "8a") { setTh(document.querySelector('#keyTable th[data-colkey="fillersT"]'), "Fillers_T (" + s + ")"); setTh(document.querySelector('#keyTable th[data-colkey="fillersR"]'), "Fillers_R (" + s + ")"); }
+  document.querySelectorAll('[data-pf-lab="' + sec + '"]').forEach(e => { const t = "Fillers (" + s + ")"; e.textContent !== t && (e.textContent = t); });
+}
+/* the line beside the status of the section */
+function say(sec, msg) {
+  let e = $(CFG[sec].note);
+  if (!e) {
+    if (!msg) return;
+    const st = $(CFG[sec].status); if (!st || !st.parentNode) return;
+    e = document.createElement("span"); e.id = CFG[sec].note; e.className = "text-xs wbca-pf-note"; e.setAttribute("role", "status");
+    e.setAttribute("data-wbca-nosetting", ""); e.style.cssText = "margin-left:0.5rem; color:#6b7280;";
+    st.insertAdjacentElement("afterend", e);
+  }
+  e.textContent !== msg && (e.textContent = msg);
+}
+
+/* ---------- 7), 8a): the columns Fillers_T / Fillers_R ---------- */
+const _fmt = window.formatFillersWithClick;
+window.formatFillersWithClick = function (map, pframe, side) {
+  const ctx = window._wbcaPframeDisplayContext, sec = ctx === "7" ? "7" : ctx === "8a" ? "8a" : null;
+  if (!sec || !cur(sec)) return typeof _fmt === "function" ? _fmt.apply(this, arguments) : "";
+  return strip(sec, side === "reference" ? "R" : "T", String(pframe), side === "reference" ? "reference" : "target");
+};
+if (typeof window._wbcaHf7FillerHtml === "function") {
+  const _h7 = window._wbcaHf7FillerHtml;
+  window._wbcaHf7FillerHtml = function (map, pframe, side) {
+    if (!cur("7")) return _h7.apply(this, arguments);
+    return strip("7", side === "reference" ? "R" : "T", String(pframe), side === "reference" ? "reference" : "target");
+  };
+}
+
+/* ---------- 8b) ---------- */
+function cell8b(scope, key) {
+  if (!key || String(key).indexOf("*") < 0 || !on("8b")) return "";
+  const c = cur("8b"); if (!c) return "";
+  if (scope === REF && !c.R.length) return "";
+  return strip("8b", scope, String(key), null);
+}
+/* Copy Table / Export to CSV / the sheet "8b Displayed Table" (_key8bStructuredRows): a row (a column when transposed) of the fillers of
+   each Target folder and of the Reference */
+function x8b() {
+  const c = cur("8b"); if (!c || !on("8b")) return null;
+  return { lab: "fillers (" + suf("8b") + ")", ref: c.R.length > 0, t: (scope, key) => key && String(key).indexOf("*") >= 0 ? text("8b", scope, String(key)) : "" };
+}
+/* the sheets of the Target folders in the Excel file: the columns Fillers_T / Fillers_R (the Reference of that folder); none when Filler
+   display is Off (x8bDet: a p-frame result of 8b) is shown) */
+const x8bDet = () => !!cur("8b");
+function x8bHead() { if (!on("8b")) return []; const s = suf("8b"); return ["Fillers_T (" + s + ")", "Fillers_R (" + s + ")"]; }
+function x8bSheet(folder, key) { return on("8b") ? [text("8b", folder, String(key)), text("8b", RPRE + folder, String(key))] : []; }
+
+/* ---------- 8c) ---------- */
+function x8c() { const c = cur("8c"); return c && on("8c") ? { lab: "Fillers (" + suf("8c") + ")" } : null; }
+function row8c(folder, measures, tw, i) {
+  const X = x8c(); if (!X) return "";
+  let h = '<tr class="k8c-t3-fill"><td data-pf-lab="8c" style="padding:1px 4px;border:1px solid #e5e7eb;border-top:none;text-align:center;font-size:0.66rem;line-height:1.1;color:#6b7280;white-space:normal;">' + esc(X.lab) + "</td>";
+  for (const m of measures) {
+    const w = (tw[m.key] || [])[i] || "";
+    h += '<td class="wbca-pf-td" style="padding:0 4px 2px;border:1px solid #e5e7eb;border-top:none;text-align:left;">' + (w && w.indexOf("*") >= 0 ? strip("8c", folder, w, null) : "") + "</td>";
+  }
+  return h + "</tr>";
+}
+/* the rows of Table 3 in Export to CSV and Excel: a row of the fillers under each rank (gw: the columns of a measure) */
+function t3(rows, start, nM, gw, folder) {
+  const X = x8c(); if (!X || !Array.isArray(rows)) return;
+  for (let i = rows.length - 1; i >= start; i--) {
+    const r = rows[i];
+    if (!Array.isArray(r) || typeof r[0] !== "number") continue;
+    const out = [X.lab];
+    for (let k = 0; k < nM; k++) {
+      const w = r[1 + k * gw];
+      out.push(w && String(w).indexOf("*") >= 0 ? text("8c", folder, String(w)) : "");
+      for (let g = 1; g < gw; g++) out.push("");
+    }
+    rows.splice(i + 1, 0, out);
+  }
+}
+function words8c() {
+  const out = [];
+  try {
+    const p = key8cGetRenderParams(), src = typeof _key8cFilteredCache === "object" && _key8cFilteredCache ? _key8cFilteredCache : key8cAllResults;
+    for (const folder of Object.keys(src || {})) {
+      const r = src[folder]; if (!r || !r.rankMaps) continue;
+      const seen = new Set();
+      for (const m of p.selMeasures) key8cSliceTies(r.rankMaps, m.key, p.N2).forEach(w => { w && w.indexOf("*") >= 0 && !seen.has(w) && (seen.add(w), out.push([folder, w])); });
+    }
+  } catch (e) { console.warn("[WBCA fillers 8c]", e); }
+  return out;
+}
+
+/* ---------- 9a) ---------- */
+function row9a(features) {
+  const c = cur("9a"); if (!c || !on("9a") || !features || !features.length) return "";
+  let h = '<tr class="freq-pf-row" style="font-size:0.72rem;"><td class="freq-sel-col"></td><td data-pf-lab="9a" style="font-weight:600;white-space:nowrap;">Fillers (' + esc(suf("9a")) + ")</td><td></td>";
+  for (const f of features) h += '<td class="wbca-pf-td" style="text-align:left;">' + (String(f).indexOf("*") >= 0 ? strip("9a", ALL, String(f), null) : "") + "</td>";
+  return h + "</tr>";
+}
+
+/* ---------- what an export or Copy Table needs ---------- */
+const GUARD = {
+  copyHfBtn: ["7", "copy"], exportHfBtn: ["7", "xlsx"], exportHfCsvBtn: ["7", "csv"],
+  copyKeynessBtn: ["8a", "copy"], exportKeynessBtn: ["8a", "xlsx"], exportKeynessCsvBtn: ["8a", "csv"],
+  copyKey8bBtn: ["8b", "copy"], key8bExportBtn: ["8b", "xlsx"], key8bExportCsvBtn: ["8b", "csv"],
+  copyKey8cBtn: ["8c", "copy"], key8cExportBtn: ["8c", "xlsx"], key8cExportCsvBtn: ["8c", "csv"],
+  copyFreqTableBtn: ["9a", "copy"], exportFreqTableBtn: ["9a", "xlsx"], exportFreqTableCsvBtn: ["9a", "csv"]
+};
+const CLEAR = { hfClearBtn: "7", keyClearBtn: "8a", key8bClearBtn: "8b", key8cClearBtn: "8c", freqTableClearBtn: "9a" };
+function needOf(sec, kind) {
+  const out = waits(sec).map(el => [el.getAttribute("data-pf-scope"), el.getAttribute("data-pf-key")]);
+  const c = cur(sec);
+  if (!c || !on(sec)) return out;
+  const cand = [];
+  try {
+    if (sec === "8b") {
+      DRY = cand;
+      try { const fo = (($("key8bCopyMode") || {}).value || "features") === "features"; typeof _key8bStructuredRows === "function" && _key8bStructuredRows(fo); } finally { DRY = null; }
+      if (kind === "xlsx") {
+        const all = typeof key8bAllRows !== "undefined" ? key8bAllRows : null;
+        for (const f of Object.keys(all || {})) for (const r of all[f] || []) r && r.feature && String(r.feature).indexOf("*") >= 0 && (cand.push([f, String(r.feature)]), cand.push([RPRE + f, String(r.feature)]));
+      }
+    } else if (sec === "8c" && kind !== "copy") words8c().forEach(p => cand.push(p));
+    else if (sec === "9a" && kind !== "copy") {
+      const d = typeof getEffectiveFreqTableData === "function" ? getEffectiveFreqTableData() : null;
+      (d && d.features || []).forEach(k => String(k).indexOf("*") >= 0 && cand.push([ALL, String(k)]));
+    }
+  } catch (e) { console.warn("[WBCA fillers]", e); }
+  /* only the p-frames whose fillers from Compute are not the top n */
+  const n = topN(sec);
+  for (const p of cand) needs(c, p[0], p[1], n) && out.push(p);
+  return out;
+}
+/* a write to the clipboard started in the click, with a text that is promised (as 9a) does while it adds columns) */
+function clipLater() {
+  const C = { give: null, fail: null, wrote: null };
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.write === "function" && typeof ClipboardItem === "function") {
+      const p = new Promise((a, r) => { C.give = a; C.fail = r; });
+      p.catch(() => {});
+      C.wrote = navigator.clipboard.write([new ClipboardItem({ "text/plain": p.then(t => new Blob([t], { type: "text/plain" })) })]).then(() => true, () => false);
+    }
+  } catch (e) { C.wrote = null; }
+  return C;
+}
+let BYPASS = null;
+/* the copies of the page hand their text to window._wbcaCopyHand (1-14); without it (1-8) Copy Table is pressed again after the count */
+const CAN_HAND = (() => { try { return typeof copyTextToClipboard === "function" && String(copyTextToClipboard).indexOf("_wbcaCopyHand") >= 0; } catch (e) { return false; } })();
+function again(b, C, sec) {
+  if (!C) { BYPASS = b; try { b.click(); } finally { BYPASS = null; } return; }
+  const texts = [], ws = [];
+  window._wbcaCopyHand = t => (texts.push(t), new Promise(r => ws.push(r)));
+  window._wbcaCopyPend = C;
+  BYPASS = b;
+  try { b.click(); } finally { window._wbcaCopyHand = null; BYPASS = null; }
+  if (window._wbcaCopyPend !== C) return;   /* another wait took the click with the same write (9a) adding columns) */
+  window._wbcaCopyPend = null;
+  if (!texts.length) { C.fail && C.fail(new Error("nothing to copy")); return; }
+  const t = texts[texts.length - 1],
+    done = ok => { ws.forEach(r => r(ok)); ok || say(sec, "The browser did not allow the copy after the wait. Press 📋 Copy Table again."); },
+    usual = () => { let ok = false; try { ok = typeof _execCopyFallback === "function" && !!_execCopyFallback(t); } catch (e) {} done(ok); };
+  C.wrote ? (C.give(t), C.wrote.then(ok => ok ? done(true) : usual())) : usual();
+}
+/* CSV: the page writes a CSV file after it reads the CSV text again (SheetJS), which takes the separator that is most frequent outside
+   quotes in the first characters; in an export of these sections a field with ";" (the fillers: "…; …") is put in quotes, so that its
+   ";" is never taken for the separator (the file written is the same) */
+let PFCSV = 0;
+function csvRows(text) {
+  const rows = []; let row = [], f = "", i = 0, q = false;
+  text = String(text || "").replace(/^\uFEFF/, "");
+  while (i < text.length) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { f += '"'; i += 2; continue; } q = false; i++; continue; } f += ch; i++; continue; }
+    if (ch === '"') { q = true; i++; continue; }
+    if (ch === ",") { row.push(f); f = ""; i++; continue; }
+    if (ch === "\n") { row.push(f); rows.push(row); row = []; f = ""; i++; continue; }
+    if (ch === "\r") { i++; continue; }
+    f += ch; i++;
+  }
+  if (f.length || row.length) { row.push(f); rows.push(row); }
+  return rows;
+}
+const csvQ = v => /[",;\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+const _dlc = window.downloadCSV;
+if (typeof _dlc === "function") window.downloadCSV = function (csv, filename) {
+  if (PFCSV && typeof csv === "string" && csv.indexOf(";") >= 0) { try { const a = Array.from(arguments); a[0] = csvRows(csv).map(r => r.map(csvQ).join(",")).join("\r\n"); return _dlc.apply(this, a); } catch (e) { console.warn("[WBCA fillers CSV]", e); } }
+  return _dlc.apply(this, arguments);
+};
+/* the click of Copy Table or an export (registered on window before the other handlers of the page, after the settings lock) */
+window._wbcaPfGuard = function (ev) {
+  try {
+    const b = ev.target && ev.target.closest ? ev.target.closest("button[id]") : null;
+    if (!b) return;
+    if (CLEAR[b.id]) { setTimeout(() => { cur(CLEAR[b.id]); }, 0); return; }
+    const g = GUARD[b.id];
+    if (!g) return;
+    if (g[1] === "csv") { PFCSV++; setTimeout(() => { PFCSV = Math.max(0, PFCSV - 1); }, 0); }
+    if (b === BYPASS) return;
+    CUTS.length = 0;
+    const [sec, kind] = g, c = cur(sec);
+    if (!c) return;
+    say(sec, "");
+    const pairs = needOf(sec, kind);
+    if (!c.busy && !missOf(c, pairs).size && !waits(sec).length) return;
+    ev.preventDefault(); ev.stopImmediatePropagation();
+    const C = kind === "copy" && CAN_HAND ? clipLater() : null;
+    run(c, sec, pairs).then(ok => {
+      if (!ok || cur(sec) !== c || !b.isConnected) { C && C.fail && C.fail(new Error("stopped")); return; }
+      put(sec, true);
+      if (kind === "copy" && !CAN_HAND) { say(sec, "The fillers are counted. Press 📋 Copy Table again."); return; }
+      again(b, C, sec);
+    });
+  } catch (e) { console.warn("[WBCA fillers]", e); }
+};
+
+/* ---------- Excel: the cells of more than 32,767 characters and the sheet Fillers ---------- */
+function cutCell(v) {
+  const rec = LONG.get(v), sep = sepTxt(rec.sec), tail = n => sep + "… (+" + n + " more: sheet Fillers)";
+  let len = 0, k = 0;
+  for (; k < rec.labels.length; k++) { const add = rec.labels[k].length + (k ? sep.length : 0); if (len + add > XL - 64) break; len += add; }
+  CUTS.some(r => r === rec) || CUTS.push(rec);
+  return rec.labels.slice(0, k).join(sep) + tail(rec.labels.length - k);
+}
+function scopeName(rec) {
+  const s = rec.scope;
+  if (rec.sec === "7" || rec.sec === "8a") return s === "R" ? "Reference" : "Target";
+  if (s === REF) return "Reference";
+  if (s === ALL) return "All groups of the table";
+  if (s.indexOf(RPRE) === 0) return "Reference of " + s.slice(RPRE.length);
+  return s;
+}
+function fillerSheet() {
+  const rows = [["Section", "Folder / side", "p-frame", "Filler", "Frequency"]];
+  let cut = false;
+  for (const rec of CUTS) {
+    for (let i = 0; i < rec.it.length; i++) {
+      if (rows.length >= 1048000) { cut = true; break; }
+      rows.push([CFG[rec.sec].name, scopeName(rec), rec.key, lab(rec.key, rec.it[i][0], rec.mode), rec.it[i][1]]);
+    }
+    if (cut) break;
+  }
+  cut && rows.push(["(The rest is not written: a sheet holds at most 1,048,576 rows. Export to CSV keeps every filler.)"]);
+  return rows;
+}
+if (typeof XLSX !== "undefined" && XLSX.utils) {
+  const _aoa = XLSX.utils.aoa_to_sheet;
+  XLSX.utils.aoa_to_sheet = function (data) {
+    if (LONG.size && Array.isArray(data)) {
+      let hit = false;
+      const d2 = data.map(r => Array.isArray(r) && r.some(v => typeof v === "string" && v.length > XL && LONG.has(v)) ? (hit = true, r.map(v => typeof v === "string" && v.length > XL && LONG.has(v) ? cutCell(v) : v)) : r);
+      if (hit) { const a = Array.from(arguments); a[0] = d2; return _aoa.apply(this, a); }
+    }
+    return _aoa.apply(this, arguments);
+  };
+  const _wf = XLSX.writeFile;
+  if (typeof _wf === "function") XLSX.writeFile = function (wb) {
+    if (CUTS.length && wb && Array.isArray(wb.SheetNames)) {
+      try {
+        let name = "Fillers", k = 2;
+        while (wb.SheetNames.includes(name)) name = "Fillers (" + (k++) + ")";
+        XLSX.utils.book_append_sheet(wb, _aoa.call(XLSX.utils, fillerSheet()), name);
+      } catch (e) { console.warn("[WBCA fillers sheet]", e); }
+      CUTS.length = 0;
+    }
+    return _wf.apply(this, arguments);
+  };
+}
+
+/* ---------- a filler opens 4) KWIC with its n-gram ---------- */
+const ngramType = c => c && c.ft === "pframe_lemma" ? "ngram_lemma" : "ngram_word";
+const rawFolder = f => String(f).replace(/^__wbca_ref__/, "");
+function kwicFolders(feature, ft, folders) {
+  if (folders.length === 1 && typeof jumpToKwicFrom8b === "function") return jumpToKwicFrom8b(feature, ft, folders[0]);
+  clearKwicFilters(); currentCollocateWord = null; currentKwicFileFilter = null; currentKwicFolderFilter = null;
+  if (typeof setKwicSpecificFoldersSafe === "function") setKwicSpecificFoldersSafe(folders);
+  else { const sp = document.querySelector('input[name="kwicScope"][value="specific"]'); sp && (sp.checked = true); typeof setSelectedKwicFolders === "function" && setSelectedKwicFolders(folders); }
+  window._kwicScopeFromJump = true;
+  currentKwicFeatureType = setFeatureToAllSections(feature, ft, "specific");
+  const sm = $("kwicSearchMode"); sm && (sm.value = "exact");
+  currentKwicFeature = feature; computeKwic();
+  const card = $("kwicCard"); card && card.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function kwic8a(item) {
+  clearKwicFilters();
+  const filler = item.getAttribute("data-filler"), pframe = item.getAttribute("data-pframe"), side = item.getAttribute("data-side") || "target",
+    ng = restore(pframe, filler), sc = document.querySelector('input[name="kwicScope"][value="' + side + '"]');
+  sc && (sc.checked = true);
+  const ft = typeof lastKeyFeatureType !== "undefined" && lastKeyFeatureType === "pframe_lemma" ? "ngram_lemma" : "ngram_word";
+  currentKwicFeature = ng; currentCollocateWord = null;
+  currentKwicFeatureType = setFeatureToAllSections(ng, ft, side);
+  currentKwicFileFilter = null; currentKwicFolderFilter = null; computeKwic();
+  const card = $("kwicCard"); card && card.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+document.addEventListener("click", ev => {
+  const t = ev.target; if (!t || !t.closest) return;
+  const item = t.closest(".filler-item");
+  if (item && t.closest("#keyTableBody") && item.closest('[data-pf-sec="8a"]')) { ev.stopPropagation(); ev.preventDefault(); try { kwic8a(item); } catch (e) { console.warn(e); } return; }
+  const s = t.closest(".wbca-pf-fill");
+  if (!s) return;
+  ev.stopPropagation(); ev.preventDefault();   /* a click in a strip (its scroll bar) is not a click on the cell */
+  if (!item) return;
+  const sec = s.getAttribute("data-pf-sec"), scope = s.getAttribute("data-pf-scope"), c = cur(sec);
+  if (!c) return;
+  const ng = restore(item.getAttribute("data-pframe"), item.getAttribute("data-filler")), ft = ngramType(c);
+  try {
+    if (sec === "9a") jumpToKwicFromHf(ng, c.scope === "all" || c.scope === "reference" ? c.scope : "target", ft);
+    else if (scope === REF) kwicFolders(ng, ft, Array.from(new Set(c.R.map(rawFolder))));
+    else jumpToKwicFrom8b(ng, ft, scope);
+  } catch (e) { console.warn("[WBCA fillers KWIC]", e); }
+}, true);
+
+/* ---------- the controls in the Stars (*) settings of each section ---------- */
+const TIP_DISP = "Off at the start: the fillers of the p-frames are not shown or counted, which keeps the table light. Full n-gram (frequency): each filler as the n-gram with its word(s) in *; * filler only — word(s) (frequency): only the word(s) in *. The fillers (Fillers: top n for each p-frame) are then shown in the table, and Copy Table and the exports take them.";
+const TIP_TOP = "How many fillers are shown for each p-frame, the most frequent first (0 = all). The fillers counted by Compute are taken when they give the top n exactly; Compute keeps at most 200 kinds of fillers for each p-frame, so a p-frame for which they do not (a filler not kept could be among the top n) is counted again, exactly, in the files of the last Compute (with its settings). Copy Table and the exports take the same fillers, and their headings say top n.";
+const TIP_TOP9 = "How many fillers are shown for each p-frame, the most frequent first (0 = all). The fillers are counted exactly, in the files of the last Compute (all the groups of the table), when the table is drawn. Copy Table and the exports take the same fillers, and their heading says top n.";
+const WHY_OFF = "Not used with Filler display: Off (the fillers are not shown or counted).";
+function install() {
+  for (const sec of SECS) {
+    const cf = CFG[sec], blk = document.querySelector(cf.block);
+    if (!blk) continue;
+    if (!$(cf.disp)) {
+      const l = document.createElement("label");
+      l.style.cssText = "display:inline-flex;align-items:center;gap:0.25rem;margin-left:0.4rem;";
+      l.title = cf.off ? TIP_DISP : "Choose whether the fillers of the p-frames show the restored full n-gram or only the word(s) occupying *.";
+      l.innerHTML = 'Filler display: <select id="' + cf.disp + '" style="font-size:0.78rem;">' + (cf.off ? '<option value="off" selected>Off</option><option value="full">' : '<option value="full" selected>')
+        + 'Full n-gram (frequency)</option><option value="filler">* filler only — word(s) (frequency)</option></select>';
+      blk.appendChild(l);
+    }
+    if (!$(cf.top)) {
+      const l = document.createElement("label");
+      l.style.cssText = "display:inline-flex;align-items:center;gap:0.25rem;margin-left:0.4rem;";
+      l.title = sec === "9a" ? TIP_TOP9 : TIP_TOP;
+      l.setAttribute("data-pf-tip", l.title);
+      l.innerHTML = 'Fillers: top <input type="number" id="' + cf.top + '" data-wbca-label="Fillers: top n" value="' + TOP0(sec) + '" min="0" max="100000" step="1" style="width:3.8rem;font-size:0.78rem;"> <span style="font-size:0.72rem;color:#6b7280;">(0 = all)</span>';
+      blk.appendChild(l);
+    }
+    grey(sec);
+  }
+}
+/* Fillers: top n is not used while Filler display is Off (8b), 8c), 9a)): greyed, the reason first in its tooltip */
+function grey(sec) {
+  const cf = CFG[sec], e = $(cf.top), l = e && e.closest("label");
+  if (!cf.off || !e || !l) return;
+  const use = on(sec), tip = l.getAttribute("data-pf-tip") || l.title;
+  e.disabled = !use; e.style.opacity = use ? "" : "0.4"; l.style.opacity = use ? "" : "0.4";
+  l.title = use ? tip : WHY_OFF + " " + tip;
+}
+/* the table of 8b), 8c) or 9a) drawn again when Filler display is turned on or off (8b): with the arguments of its last drawing) */
+let LAST8B = null;
+const _rk8b = window.renderKey8bTable;
+if (typeof _rk8b === "function") window.renderKey8bTable = function () { LAST8B = Array.from(arguments); return _rk8b.apply(this, arguments); };
+function redraw(sec) {
+  if (!cur(sec)) return;
+  try {
+    if (sec === "8b") LAST8B && window.renderKey8bTable.apply(window, LAST8B);
+    else if (sec === "8c") typeof renderKey8cResults === "function" && renderKey8cResults();
+    else if (sec === "9a") typeof renderFrequencyTable === "function" && renderFrequencyTable();
+  } catch (e) { console.warn("[WBCA fillers]", e); }
+}
+const TD = {}, WAS = {};
+document.addEventListener("change", ev => {
+  const t = ev.target; if (!t || !t.id) return;
+  for (const sec of SECS) {
+    if (t.id === CFG[sec].disp) {
+      grey(sec);
+      const now = on(sec);
+      if (CFG[sec].off && WAS[sec] !== undefined && WAS[sec] !== now) { WAS[sec] = now; redraw(sec); return; }
+      WAS[sec] = now; put(sec, false); return;
+    }
+    if (t.id === CFG[sec].top) { clearTimeout(TD[sec]); put(sec, false); return; }
+  }
+});
+document.addEventListener("input", ev => {
+  const t = ev.target; if (!t || !t.id) return;
+  for (const sec of SECS) if (t.id === CFG[sec].top) { clearTimeout(TD[sec]); TD[sec] = setTimeout(() => put(sec, false), 400); return; }
+});
+/* the lists merged from folders (Compute of 8b)): which folders' lists were full, for each p-frame */
+const _mfs = window.wbcaMergeFolderCountsSteps;
+if (typeof _mfs === "function") {
+  window.wbcaMergeFolderCountsSteps = async function (folderList, byFolder, collectFileDetails, step) {
+    const out = await _mfs.apply(this, arguments);
+    if (!out || !out.fillers || !byFolder) return out;
+    try {
+      let i = 0;
+      for (const f of folderList || []) {
+        const acc = byFolder[f];
+        if (!acc || !acc.fillers) continue;
+        for (const slot in acc.fillers) {
+          if (!(++i & 4095) && typeof step === "function" && !(await step())) return null;
+          const src = acc.fillers[slot], mm = out.fillers[slot];
+          if (!src || !mm || !(typeof src.__n === "number" && src.__n >= CAP)) continue;
+          let p = PARTS.get(mm);
+          p || PARTS.set(mm, p = []);
+          p.push({ m: src, F: acc.counts ? acc.counts[slot] : undefined });
+        }
+      }
+    } catch (e) { console.warn("[WBCA fillers]", e); }
+    return out;
+  };
+  HOOKED = true;
+}
+/* a new corpus, Reset: no fillers kept */
+["wbcaClearCorpusResults", "wbcaResetAllResults"].forEach(n => {
+  const f = window[n];
+  if (typeof f !== "function" || f.__wbPf) return;
+  const w = function () { try { drop(); } catch (e) {} return f.apply(this, arguments); };
+  w.__wbPf = true; window[n] = w;
+});
+function init() {
+  install();
+  SECS.forEach(sec => { WAS[sec] = on(sec); });
+  if (!$("wbca-pf-style")) {
+    const st = document.createElement("style"); st.id = "wbca-pf-style";
+    st.textContent = ".wbca-pf-fill{display:block;width:0;min-width:100%;box-sizing:border-box;height:calc(1.2em + 8px);line-height:1.2;margin:0;padding:0;font-size:0.75rem;text-align:left;white-space:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:thin;cursor:default}"
+      + ".wbca-pf-fill .filler-item{display:inline;white-space:nowrap!important}.wbca-pf-sep{font-size:0;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}.wbca-pf-wait{color:#9ca3af;font-style:italic}td.wbca-pf-td{vertical-align:top}";
+    document.head.appendChild(st);
+  }
+  /* the headings of 7) and 8a) are drawn again with the tables */
+  ["hfTable", "keyTable"].forEach((id, i) => {
+    const tb = $(id), th = tb && (tb.tHead || tb.querySelector("thead"));
+    th && typeof MutationObserver !== "undefined" && new MutationObserver(() => labels(i ? "8a" : "7")).observe(th, { childList: true, subtree: true });
+  });
+  labels("7"); labels("8a");
+}
+document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
+
+window._wbcaPfBegin = begin;
+window._wbcaPfKeep = keep;
+window._wbcaPfClean = clean;
+window._wbcaPF = { REF, RPRE, ALL, CAP, cur, items, text, strip, cell8b, x8b, x8bDet, x8bHead, x8bSheet, row8c, t3, row9a, topN, on, put, drop, state: S, masksOf, listOf, needOf, needs, fromCompute, decide, parts: PARTS, hooked: () => HOOKED };
+})();
+</script>
 </body>
 </html>
